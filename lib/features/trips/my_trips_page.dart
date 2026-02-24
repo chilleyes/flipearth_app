@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../itinerary/itinerary_detail_page.dart';
 
 class MyTripsPage extends StatelessWidget {
   const MyTripsPage({super.key});
@@ -19,7 +20,7 @@ class MyTripsPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildTripCard(),
+                  _buildTripCard(context),
                   // Additional space if there were more cards
                 ],
               ),
@@ -57,9 +58,14 @@ class MyTripsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTripCard() {
+  Widget _buildTripCard(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ItineraryDetailPage()),
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

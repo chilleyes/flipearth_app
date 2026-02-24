@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../orders/order_list_page.dart';
+import '../chat/chat_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -18,7 +20,7 @@ class ProfilePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: Column(
                 children: [
-                  _buildSettingsCard(),
+                  _buildSettingsCard(context),
                   const SizedBox(height: 24),
                   _buildLogoutButton(),
                 ],
@@ -122,7 +124,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsCard() {
+  Widget _buildSettingsCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -139,11 +141,25 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         children: [
           _buildSettingsTile(
+            title: '我的客服',
+            subtitle: '在线支持与反馈',
+            icon: PhosphorIconsFill.headset,
+            iconColor: AppColors.brandBlue,
+            iconBgColor: const Color(0xFFEFF6FF),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatPage()));
+            },
+          ),
+          _buildDivider(),
+          _buildSettingsTile(
             title: '订单中心',
             subtitle: '历史行程与车票',
             icon: PhosphorIconsFill.ticket,
             iconColor: AppColors.brandBlue,
             iconBgColor: const Color(0xFFEFF6FF), // blue-50
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderListPage()));
+            },
           ),
           _buildDivider(),
           _buildSettingsTile(
@@ -180,6 +196,7 @@ class ProfilePage extends StatelessWidget {
     required IconData icon,
     required Color iconColor,
     required Color iconBgColor,
+    VoidCallback? onTap,
   }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -204,7 +221,7 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
       trailing: const Icon(PhosphorIconsBold.caretRight, color: AppColors.borderLight, size: 16),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 
