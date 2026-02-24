@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../booking/widgets/checkout_sheet.dart';
 
 class AddTravelerPage extends StatefulWidget {
   const AddTravelerPage({super.key});
@@ -245,18 +246,19 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
         ),
         child: ElevatedButton(
           onPressed: () {
-            // Save mock logic and pop
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('乘车人信息已安全保存', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
-                backgroundColor: AppColors.textMain,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
+            // Dismiss keyboard
+            FocusScope.of(context).unfocus();
+            
+            // Pop the specific AddTravelerPage from navigation stack
+            Navigator.pop(context);
+            
+            // Show the Checkout Sheet on top of the underlying Booking flow
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => const CheckoutSheet(),
             );
-            Future.delayed(const Duration(milliseconds: 600), () {
-              if (mounted) Navigator.pop(context);
-            });
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.textMain,

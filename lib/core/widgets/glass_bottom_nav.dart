@@ -41,9 +41,9 @@ class GlassBottomNavBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _NavBarItem(
-                icon: PhosphorIcons.magnifyingGlass(),
-                activeIcon: PhosphorIcons.magnifyingGlass(PhosphorIconsStyle.fill),
-                label: '搜索',
+                icon: PhosphorIcons.compass(),
+                activeIcon: PhosphorIcons.compass(PhosphorIconsStyle.fill),
+                label: '探索',
                 isSelected: currentIndex == 0,
                 onTap: () => onTabSelected(0),
               ),
