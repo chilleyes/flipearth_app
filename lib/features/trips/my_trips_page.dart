@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../itinerary/itinerary_detail_page.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class MyTripsPage extends StatelessWidget {
   const MyTripsPage({super.key});
@@ -70,12 +71,12 @@ class MyTripsPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.borderLight),
+          border: Border.all(color: AppColors.brandBlue.withOpacity(0.4), width: 2), // Highlight for LIVE
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              color: AppColors.brandBlue.withOpacity(0.15),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
@@ -84,7 +85,7 @@ class MyTripsPage extends StatelessWidget {
           children: [
             // Top Image Section
             SizedBox(
-              height: 128,
+              height: 180, // Taller image area to hold dashboard data
               width: double.infinity,
               child: Stack(
                 fit: StackFit.expand,
@@ -100,38 +101,36 @@ class MyTripsPage extends StatelessWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          Colors.black.withOpacity(0.6),
+                          Colors.black.withOpacity(0.8),
                           Colors.transparent,
                         ],
                       ),
                     ),
                   ),
-                  // '即将出行' Glass Pill
+                  // 'LIVE' Pill
                   Positioned(
-                    top: 12,
-                    left: 12,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            border: Border.all(color: Colors.white.withOpacity(0.2)),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            '即将出行',
-                            style: AppTextStyles.caption.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ),
-                      ),
+                    top: 16,
+                    left: 16,
+                    child: _buildLivePill(),
+                  ),
+                  // Weather & Currency Row
+                  Positioned(
+                    top: 16,
+                    right: 16,
+                    child: Row(
+                      children: [
+                        _buildGlassWidget(PhosphorIconsFill.cloudSun, '18°C'),
+                        const SizedBox(width: 8),
+                        _buildGlassWidget(PhosphorIconsFill.currencyEur, '1:1.15'),
+                      ],
                     ),
+                  ),
+                  // Progress Bar overlay at the bottom of the image
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: _buildLiveProgressBar(),
                   ),
                 ],
               ),
@@ -204,6 +203,136 @@ class MyTripsPage extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLivePill() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppColors.brandBlue.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 6, height: 6,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [BoxShadow(color: Colors.white, blurRadius: 4)],
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '行程中 (LIVE)',
+                style: AppTextStyles.caption.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassWidget(IconData icon, String text) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.3),
+            border: Border.all(color: Colors.white.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.white, size: 14),
+              const SizedBox(width: 4),
+              Text(text, style: AppTextStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLiveProgressBar() {
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          color: Colors.black.withOpacity(0.4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 children: [
+                   Text('伦敦', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                   Text('预计 45 分钟后抵达', style: AppTextStyles.caption.copyWith(color: AppColors.brandBlue, fontWeight: FontWeight.bold)),
+                   Text('巴黎', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                 ],
+               ),
+               const SizedBox(height: 12),
+               LayoutBuilder(
+                 builder: (context, constraints) {
+                   const progress = 0.7;
+                   return Stack(
+                     clipBehavior: Clip.none,
+                     alignment: Alignment.centerLeft,
+                     children: [
+                       Container(
+                         height: 4,
+                         width: constraints.maxWidth,
+                         decoration: BoxDecoration(
+                           color: Colors.white.withOpacity(0.2),
+                           borderRadius: BorderRadius.circular(2),
+                         ),
+                       ),
+                       Container(
+                         height: 4,
+                         width: constraints.maxWidth * progress,
+                         decoration: BoxDecoration(
+                           color: AppColors.brandBlue,
+                           borderRadius: BorderRadius.circular(2),
+                           boxShadow: [
+                             BoxShadow(color: AppColors.brandBlue.withOpacity(0.8), blurRadius: 8),
+                           ],
+                         ),
+                       ),
+                       Positioned(
+                         left: (constraints.maxWidth * progress) - 12.0,
+                         child: Container(
+                           padding: const EdgeInsets.all(4),
+                           decoration: const BoxDecoration(
+                             color: Colors.white,
+                             shape: BoxShape.circle,
+                             boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
+                           ),
+                           child: const Icon(PhosphorIconsFill.train, color: AppColors.brandBlue, size: 14),
+                         ),
+                       ),
+                     ],
+                   );
+                 }
+               ),
+            ],
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../booking/widgets/checkout_sheet.dart';
+import '../booking/seat_selection_page.dart';
 
 class AddTravelerPage extends StatefulWidget {
   const AddTravelerPage({super.key});
@@ -15,6 +16,7 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _passportController = TextEditingController();
+  String _selectedSeat = '选座偏好 (可选)';
 
   @override
   void dispose() {
@@ -43,6 +45,8 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
                       _buildIdentitySection(),
                       const SizedBox(height: 24),
                       _buildDocumentSection(),
+                      const SizedBox(height: 24),
+                      _buildSeatSection(),
                     ],
                   ),
                 ),
@@ -159,6 +163,58 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
               _buildInputRow(label: '护照号', placeholder: '输入护照号码', controller: _passportController, isEnd: false),
               _buildSelectorRow(label: '有效期至', value: 'YYYY-MM-DD', icon: PhosphorIconsBold.calendarBlank, isEnd: true),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSeatSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text('座位服务', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.borderLight),
+            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+          ),
+          child: GestureDetector(
+            onTap: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SeatSelectionPage()),
+              );
+              if (result != null && result is String) {
+                setState(() => _selectedSeat = result);
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Row(
+                children: [
+                 SizedBox(
+                    width: 85,
+                    child: Text('选择座位', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                 ),
+                 Expanded(
+                    child: Text(
+                      _selectedSeat,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: _selectedSeat.contains('可选') ? AppColors.textMuted : AppColors.brandBlue,
+                      ),
+                    ),
+                  ),
+                  const Icon(PhosphorIconsFill.armchair, color: AppColors.brandBlue, size: 20),
+                ],
+              ),
+            ),
           ),
         ),
       ],

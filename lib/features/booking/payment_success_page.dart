@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -32,7 +33,13 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> with SingleTick
       CurvedAnimation(parent: _controller, curve: const Interval(0.4, 1.0, curve: Curves.easeIn)),
     );
 
-    _controller.forward();
+    _controller.forward().then((_) {
+      HapticFeedback.lightImpact(); // Secondary feedback when text fades in
+    });
+    
+    Future.delayed(const Duration(milliseconds: 100), () {
+       HapticFeedback.mediumImpact(); // Primary feedback on badge pop
+    });
   }
 
   @override

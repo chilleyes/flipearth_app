@@ -239,7 +239,6 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
     
     Color bgColor;
     Color borderColor;
-    Color iconColor = Colors.transparent;
     
     switch (state) {
       case SeatState.available:
@@ -249,12 +248,10 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
       case SeatState.occupied:
         bgColor = AppColors.borderLight;
         borderColor = Colors.transparent;
-        iconColor = Colors.white;
         break;
       case SeatState.selected:
         bgColor = AppColors.brandBlue;
         borderColor = AppColors.brandBlue;
-        iconColor = Colors.white;
         break;
     }
 

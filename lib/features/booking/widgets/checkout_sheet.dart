@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -15,6 +16,7 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
   bool _isProcessing = false;
 
   void _handlePayment() async {
+    HapticFeedback.heavyImpact(); // Strong haptic on pay
     setState(() {
       _isProcessing = true;
     });

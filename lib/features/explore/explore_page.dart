@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../planner/planner_page.dart';
+import 'destination_guide_page.dart';
 
 class ExplorePage extends StatelessWidget {
   const ExplorePage({super.key});
@@ -229,8 +230,15 @@ class ExplorePage extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       children: [
         GestureDetector(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlannerPage())),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DestinationGuidePage(
+            heroTag: 'dest_ch',
+            title: '冰川列车全景',
+            subtitle: '8天7晚 · 绝美阿尔卑斯',
+            country: '🇨🇭 瑞士',
+            imageUrl: 'https://images.unsplash.com/photo-1515586618600-b6f9f654b9d5?auto=format&fit=crop&q=80&w=400',
+          ))),
           child: _buildGridItem(
+            heroTag: 'dest_ch',
             imageUrl: 'https://images.unsplash.com/photo-1515586618600-b6f9f654b9d5?auto=format&fit=crop&q=80&w=400',
             country: '🇨🇭 瑞士',
             title: '冰川列车全景',
@@ -238,8 +246,15 @@ class ExplorePage extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlannerPage())),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DestinationGuidePage(
+            heroTag: 'dest_fr',
+            title: '南法蔚蓝海岸之旅',
+            subtitle: '6天5晚 · 阳光沙滩与艺术',
+            country: '🇫🇷 法国',
+            imageUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=400',
+          ))),
           child: _buildGridItem(
+            heroTag: 'dest_fr',
             imageUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=400',
             country: '🇫🇷 法国',
             title: '南法蔚蓝海岸之旅',
@@ -247,8 +262,15 @@ class ExplorePage extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlannerPage())),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DestinationGuidePage(
+            heroTag: 'dest_it',
+            title: '罗马千年漫步',
+            subtitle: '5天4晚 · 沉浸式古城游',
+            country: '🇮🇹 意大利',
+            imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=400',
+          ))),
           child: _buildGridItem(
+            heroTag: 'dest_it',
             imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=400',
             country: '🇮🇹 意大利',
             title: '罗马千年漫步',
@@ -264,6 +286,7 @@ class ExplorePage extends StatelessWidget {
   }
 
   Widget _buildGridItem({
+    required String heroTag,
     required String imageUrl,
     required String country,
     required String title,
@@ -292,9 +315,12 @@ class ExplorePage extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
+                  Hero(
+                    tag: heroTag,
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Positioned(
                     bottom: 8,
