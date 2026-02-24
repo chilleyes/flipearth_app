@@ -27,7 +27,7 @@ class RouteInspirationCard extends StatelessWidget {
         margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: AppColors.borderLight, // placeholder color before image loads
+          color: context.colors.borderLight, // placeholder color before image loads
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.06),
@@ -46,7 +46,7 @@ class RouteInspirationCard extends StatelessWidget {
                 imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
-                  color: AppColors.borderLight,
+                  color: context.colors.borderLight,
                   child: const Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
                 ),
               ),
@@ -76,7 +76,7 @@ class RouteInspirationCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      style: context.textStyles.bodyMedium.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -97,7 +97,7 @@ class RouteInspirationCard extends StatelessWidget {
                           ),
                           child: Text(
                             subtitle,
-                            style: AppTextStyles.caption.copyWith(
+                            style: context.textStyles.caption.copyWith(
                               color: Colors.white.withOpacity(0.9),
                             ),
                             maxLines: 1,

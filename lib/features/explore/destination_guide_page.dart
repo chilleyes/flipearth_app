@@ -5,7 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../planner/planner_page.dart';
 
-class DestinationGuidePage extends StatelessWidget {
+class DestinationGuidePage extends StatefulWidget {
   final String heroTag;
   final String title;
   final String subtitle;
@@ -22,9 +22,36 @@ class DestinationGuidePage extends StatelessWidget {
   });
 
   @override
+  State<DestinationGuidePage> createState() => _DestinationGuidePageState();
+}
+
+class _DestinationGuidePageState extends State<DestinationGuidePage> {
+  Color? _dominantColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _extractColor();
+  }
+
+  Future<void> _extractColor() async {
+    try {
+      final imageProvider = NetworkImage(widget.imageUrl);
+      final colorScheme = await ColorScheme.fromImageProvider(provider: imageProvider);
+      if (mounted) {
+        setState(() {
+          _dominantColor = colorScheme.primary;
+        });
+      }
+    } catch (e) {
+      // Ignore errors if image loading fails
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context),
@@ -43,7 +70,7 @@ class DestinationGuidePage extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       expandedHeight: 350,
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
@@ -68,9 +95,9 @@ class DestinationGuidePage extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Hero(
-              tag: heroTag,
+              tag: widget.heroTag,
               child: Image.network(
-                imageUrl,
+                widget.imageUrl,
                 fit: BoxFit.cover,
               ),
             ),
@@ -81,8 +108,8 @@ class DestinationGuidePage extends StatelessWidget {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    AppColors.background.withOpacity(1.0),
-                    Colors.transparent,
+                    context.colors.background.withOpacity(1.0),
+                    _dominantColor?.withOpacity(0.4) ?? Colors.transparent,
                     Colors.black.withOpacity(0.3),
                   ],
                   stops: const [0.0, 0.4, 1.0],
@@ -104,8 +131,8 @@ class DestinationGuidePage extends StatelessWidget {
                        borderRadius: BorderRadius.circular(8),
                      ),
                      child: Text(
-                       country,
-                       style: AppTextStyles.caption.copyWith(
+                       widget.country,
+                       style: context.textStyles.caption.copyWith(
                          color: Colors.white,
                          fontWeight: FontWeight.bold,
                          letterSpacing: 1.0,
@@ -114,13 +141,13 @@ class DestinationGuidePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    title,
-                    style: AppTextStyles.h1.copyWith(fontSize: 32),
+                    widget.title,
+                    style: context.textStyles.h1.copyWith(fontSize: 32),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    subtitle,
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+                    widget.subtitle,
+                    style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted),
                   ),
                 ],
               ),
@@ -137,32 +164,32 @@ class DestinationGuidePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('目的地概览', style: AppTextStyles.h3),
+          Text('目的地概览', style: context.textStyles.h3),
           const SizedBox(height: 16),
           Text(
             '这是一段自动生成的目的地描述代码占位。这片土地以其悠久的历史、绝美的自然风光和充满活力的人文气息吸引着世界各地的旅行者。无论是在古老的街道漫步，还是在壮丽的山川之间驻足，这里都将为您带来不可磨灭的独家记忆。',
-            style: AppTextStyles.bodyMedium.copyWith(height: 1.6, color: AppColors.textMain.withOpacity(0.8)),
+            style: context.textStyles.bodyMedium.copyWith(height: 1.6, color: context.colors.textMain.withOpacity(0.8)),
           ),
           const SizedBox(height: 32),
-          Text('必去坐标', style: AppTextStyles.h3),
+          Text('必去坐标', style: context.textStyles.h3),
           const SizedBox(height: 16),
-          _buildSpotCard('风景名胜 1', '绝对不能错过的打卡地标'),
+          _buildSpotCard(context, '风景名胜 1', '绝对不能错过的打卡地标'),
           const SizedBox(height: 12),
-          _buildSpotCard('特色餐厅 2', '品味地道当地美食'),
+          _buildSpotCard(context, '特色餐厅 2', '品味地道当地美食'),
           const SizedBox(height: 12),
-          _buildSpotCard('隐藏秘境 3', '远离喧嚣的小众宝藏景点'),
+          _buildSpotCard(context, '隐藏秘境 3', '远离喧嚣的小众宝藏景点'),
         ],
       ),
     );
   }
 
-  Widget _buildSpotCard(String name, String desc) {
+  Widget _buildSpotCard(BuildContext context, String name, String desc) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderLight),
+        border: Border.all(color: context.colors.borderLight),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Row(
@@ -170,19 +197,19 @@ class DestinationGuidePage extends StatelessWidget {
           Container(
             width: 48, height: 48,
             decoration: BoxDecoration(
-              color: AppColors.brandBlue.withOpacity(0.1),
+              color: context.colors.brandBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(PhosphorIconsFill.mapPin, color: AppColors.brandBlue),
+            child: Icon(PhosphorIconsFill.mapPin, color: context.colors.brandBlue),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                Text(name, style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(desc, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                Text(desc, style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
               ],
             ),
           ),
@@ -192,6 +219,8 @@ class DestinationGuidePage extends StatelessWidget {
   }
 
   Widget _buildFab(BuildContext context) {
+    final fabBgColor = _dominantColor ?? context.colors.brandBlue;
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       width: double.infinity,
@@ -200,7 +229,7 @@ class DestinationGuidePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppColors.brandBlue.withOpacity(0.3),
+            color: fabBgColor.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           )
@@ -208,7 +237,7 @@ class DestinationGuidePage extends StatelessWidget {
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.brandBlue,
+          backgroundColor: fabBgColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         ),
         onPressed: () {
@@ -220,7 +249,7 @@ class DestinationGuidePage extends StatelessWidget {
           children: [
             const Icon(PhosphorIconsBold.magicWand, color: Colors.white, size: 20),
             const SizedBox(width: 8),
-            Text('以此为灵感定制行程', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+            Text('以此为灵感定制行程', style: context.textStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
       ),

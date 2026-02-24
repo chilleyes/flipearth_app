@@ -78,20 +78,20 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(PhosphorIconsBold.caretLeft, color: AppColors.textMain),
+          icon: Icon(PhosphorIconsBold.caretLeft, color: context.colors.textMain),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
           children: [
-            Text('选择您的座位', style: AppTextStyles.h3.copyWith(fontSize: 17)),
-            Text('Carriage 09 • Standard', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+            Text('选择您的座位', style: context.textStyles.h3.copyWith(fontSize: 17)),
+            Text('Carriage 09 • Standard', style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
           ],
         ),
       ),
@@ -104,16 +104,16 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildLegendItem(AppColors.borderLight, '已被占用'),
+                _buildLegendItem(context.colors.borderLight, '已被占用'),
                 const SizedBox(width: 24),
                 _buildLegendItem(Colors.white, '可选', showBorder: true),
                 const SizedBox(width: 24),
-                _buildLegendItem(AppColors.brandBlue, '已选中'),
+                _buildLegendItem(context.colors.brandBlue, '已选中'),
               ],
             ),
           ),
           
-          const Divider(height: 1, color: AppColors.borderLight),
+          Divider(height: 1, color: context.colors.borderLight),
           
           // Seat Map Area
           Expanded(
@@ -142,11 +142,11 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(4),
-            border: showBorder ? Border.all(color: AppColors.borderLight, width: 2) : null,
+            border: showBorder ? Border.all(color: context.colors.borderLight, width: 2) : null,
           ),
         ),
         const SizedBox(width: 8),
-        Text(label, style: AppTextStyles.caption.copyWith(color: AppColors.textMain, fontWeight: FontWeight.bold)),
+        Text(label, style: context.textStyles.caption.copyWith(color: context.colors.textMain, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -158,7 +158,7 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: AppColors.borderLight, width: 2),
+        border: Border.all(color: context.colors.borderLight, width: 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -172,9 +172,9 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
         children: [
           // Front of the carriage indicator
           const SizedBox(height: 24),
-          const Icon(PhosphorIconsBold.arrowUp, color: AppColors.borderLight),
+          Icon(PhosphorIconsBold.arrowUp, color: context.colors.borderLight),
           const SizedBox(height: 8),
-          Text('列车运行方向', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+          Text('列车运行方向', style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
           const SizedBox(height: 32),
           
           // Seats Grid
@@ -189,9 +189,9 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
           // Back of carriage
           Container(
             height: 40,
-            decoration: const BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(38)),
+            decoration: BoxDecoration(
+              color: context.colors.background,
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(38)),
             ),
           ),
         ],
@@ -217,7 +217,7 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
           SizedBox(
             width: 30,
             child: Center(
-              child: Text('$rowInfo', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.bold)),
+              child: Text('$rowInfo', style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.bold)),
             ),
           ),
           // Right pair
@@ -243,15 +243,15 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
     switch (state) {
       case SeatState.available:
         bgColor = Colors.white;
-        borderColor = AppColors.borderLight;
+        borderColor = context.colors.borderLight;
         break;
       case SeatState.occupied:
-        bgColor = AppColors.borderLight;
+        bgColor = context.colors.borderLight;
         borderColor = Colors.transparent;
         break;
       case SeatState.selected:
-        bgColor = AppColors.brandBlue;
-        borderColor = AppColors.brandBlue;
+        bgColor = context.colors.brandBlue;
+        borderColor = context.colors.brandBlue;
         break;
     }
 
@@ -281,7 +281,7 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
                 width: 16, height: 4,
                 decoration: BoxDecoration(
                   color: state == SeatState.occupied ? Colors.white54 : 
-                         state == SeatState.selected ? Colors.white : AppColors.borderLight,
+                         state == SeatState.selected ? Colors.white : context.colors.borderLight,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -291,7 +291,7 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
               else if (state == SeatState.occupied)
                 const Icon(PhosphorIconsBold.x, color: Colors.white, size: 16)
               else
-                Text(col, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontSize: 10)),
+                Text(col, style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontSize: 10)),
             ],
           ),
         ),
@@ -321,11 +321,11 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${_selectedSeats.length} / ${widget.requiredSeats} 已选', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+              Text('${_selectedSeats.length} / ${widget.requiredSeats} 已选', style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
               const SizedBox(height: 4),
               Text(
                 _selectedSeats.isEmpty ? '请点选座位' : _selectedSeats.join(', '), 
-                style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: AppColors.brandBlue),
+                style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: context.colors.brandBlue),
               ),
             ],
           ),
@@ -335,7 +335,7 @@ class _SeatSelectionPageState extends State<SeatSelectionPage> {
               Navigator.pop(context, _selectedSeats.join(', '));
             } : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: canConfirm ? AppColors.brandBlue : AppColors.borderLight,
+              backgroundColor: canConfirm ? context.colors.brandBlue : context.colors.borderLight,
               foregroundColor: Colors.white,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),

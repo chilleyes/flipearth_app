@@ -32,14 +32,14 @@ class EmptyStateWidget extends StatelessWidget {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: AppColors.brandBlue.withOpacity(0.05),
+              color: context.colors.brandBlue.withOpacity(0.05),
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Icon(
                 icon,
                 size: 48,
-                color: AppColors.brandBlue.withOpacity(0.8),
+                color: context.colors.brandBlue.withOpacity(0.8),
               ),
             ),
           ),
@@ -48,13 +48,13 @@ class EmptyStateWidget extends StatelessWidget {
           // Text Content
           Text(
             title,
-            style: AppTextStyles.h2.copyWith(fontSize: 20),
+            style: context.textStyles.h2.copyWith(fontSize: 20),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+            style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted),
             textAlign: TextAlign.center,
           ),
           
@@ -68,7 +68,7 @@ class EmptyStateWidget extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onButtonTap,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.textMain,
+                  backgroundColor: context.colors.textMain,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                   elevation: 0,

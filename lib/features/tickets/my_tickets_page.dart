@@ -15,7 +15,7 @@ class MyTicketsPage extends StatefulWidget {
 
 class _MyTicketsPageState extends State<MyTicketsPage> {
   bool _isLoading = true;
-  bool _hasTickets = false; // Toggle this to test
+  final bool _hasTickets = false; // Toggle this to test
 
   @override
   void initState() {
@@ -75,15 +75,15 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
         children: [
           Text(
             '我的车票',
-            style: AppTextStyles.h1.copyWith(
+            style: context.textStyles.h1.copyWith(
               fontSize: 28,
               color: Colors.white,
             ),
           ),
           Text(
             '1 张即将出行的欧洲之星车票',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textMuted,
+            style: context.textStyles.bodySmall.copyWith(
+              color: context.colors.textMuted,
             ),
           ),
         ],
@@ -130,7 +130,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                         Image.network(
                           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Eurostar_logo_2023.svg/512px-Eurostar_logo_2023.svg.png',
                           height: 20,
-                          color: AppColors.textMain, // mix-blend-multiply alternative
+                          color: context.colors.textMain, // mix-blend-multiply alternative
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -141,7 +141,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                           ),
                           child: Text(
                             '已出票',
-                            style: AppTextStyles.caption.copyWith(
+                            style: context.textStyles.caption.copyWith(
                               color: const Color(0xFF047857), // emerald-700
                               fontWeight: FontWeight.w900,
                             ),
@@ -160,21 +160,21 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'LON',
                                 style: TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.textMain,
+                                  color: context.colors.textMain,
                                   height: 1.0,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'St Pancras Int.',
-                                style: AppTextStyles.caption.copyWith(
+                                style: context.textStyles.caption.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textSecondary,
+                                  color: context.colors.textSecondary,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -188,9 +188,9 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                             children: [
                               Text(
                                 '2h 16m',
-                                style: AppTextStyles.caption.copyWith(
+                                style: context.textStyles.caption.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textMuted,
+                                  color: context.colors.textMuted,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -210,9 +210,9 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 4),
                                     color: const Color(0xFFF8FAFC),
-                                    child: const Icon(
+                                    child: Icon(
                                       PhosphorIconsFill.train,
-                                      color: AppColors.textMuted,
+                                      color: context.colors.textMuted,
                                       size: 20,
                                     ),
                                   ),
@@ -221,9 +221,9 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                               const SizedBox(height: 4),
                               Text(
                                 'EST 9014',
-                                style: AppTextStyles.caption.copyWith(
+                                style: context.textStyles.caption.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.brandBlue,
+                                  color: context.colors.brandBlue,
                                 ),
                               ),
                             ],
@@ -234,21 +234,21 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              const Text(
+                              Text(
                                 'PAR',
                                 style: TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.textMain,
+                                  color: context.colors.textMain,
                                   height: 1.0,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Gare du Nord',
-                                style: AppTextStyles.caption.copyWith(
+                                style: context.textStyles.caption.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textSecondary,
+                                  color: context.colors.textSecondary,
                                 ),
                                 textAlign: TextAlign.right,
                                 maxLines: 1,
@@ -271,7 +271,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: CustomPaint(
                       size: const Size(double.infinity, 2),
-                      painter: _DashedLinePainter(color: AppColors.borderLight, strokeWidth: 2),
+                      painter: _DashedLinePainter(color: context.colors.borderLight, strokeWidth: 2),
                     ),
                   ),
                 ),
@@ -285,7 +285,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.borderLight),
+                        border: Border.all(color: context.colors.borderLight),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Image.network(
@@ -339,11 +339,11 @@ class _TicketClipper extends CustomClipper<Path> {
     // The y position of the middle separator (rough estimate based on layout)
     // Upper section = 24 padding + 20 logo + 24 gap + 60 route text = ~128. Add padding = 152
     // Let's use an exact pixel value based on the fixed contents above it.
-    final double cutoutY = 176.0;
+    const double cutoutY = 176.0;
 
     path.lineTo(0, cutoutY - radius);
     path.arcToPoint(
-      Offset(0, cutoutY + radius),
+      const Offset(0, cutoutY + radius),
       radius: const Radius.circular(radius),
       clockwise: false,
     );

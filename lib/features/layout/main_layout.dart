@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/widgets/glass_bottom_nav.dart';
-import '../../core/theme/app_colors.dart';
 import '../planner/planner_page.dart';
 import '../explore/explore_page.dart';
 import '../trips/my_trips_page.dart';

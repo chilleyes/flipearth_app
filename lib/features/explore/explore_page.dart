@@ -6,13 +6,18 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../planner/planner_page.dart';
 import 'destination_guide_page.dart';
 
-class ExplorePage extends StatelessWidget {
+class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
 
   @override
+  State<ExplorePage> createState() => _ExplorePageState();
+}
+
+class _ExplorePageState extends State<ExplorePage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: CustomScrollView(
         slivers: [
           _buildAppBar(),
@@ -52,13 +57,13 @@ class ExplorePage extends StatelessWidget {
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
         child: Container(
-          color: AppColors.borderLight,
+          color: context.colors.borderLight,
           height: 1,
         ),
       ),
       title: Text(
         '探索灵感',
-        style: AppTextStyles.h1.copyWith(fontSize: 28),
+        style: context.textStyles.h1.copyWith(fontSize: 28),
       ),
       actions: [
         Padding(
@@ -67,13 +72,13 @@ class ExplorePage extends StatelessWidget {
             child: Container(
               width: 40,
               height: 40,
-              decoration: const BoxDecoration(
-                color: AppColors.borderLight,
+              decoration: BoxDecoration(
+                color: context.colors.borderLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 PhosphorIconsRegular.bell,
-                color: AppColors.textSecondary,
+                color: context.colors.textSecondary,
                 size: 20,
               ),
             ),
@@ -147,16 +152,16 @@ class ExplorePage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.brandBlue.withOpacity(0.2),
+                    color: context.colors.brandBlue.withOpacity(0.2),
                     border: Border.all(
-                      color: AppColors.brandBlue.withOpacity(0.3),
+                      color: context.colors.brandBlue.withOpacity(0.3),
                     ),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     '限时特惠',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.brandBlue,
+                    style: context.textStyles.caption.copyWith(
+                      color: context.colors.brandBlue,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -164,12 +169,12 @@ class ExplorePage extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   '伦敦-巴黎 直达特价',
-                  style: AppTextStyles.h2.copyWith(color: Colors.white),
+                  style: context.textStyles.h2.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '本周末出发，低至 €45 起',
-                  style: AppTextStyles.bodySmall.copyWith(
+                  style: context.textStyles.bodySmall.copyWith(
                     color: Colors.white.withOpacity(0.6),
                     fontWeight: FontWeight.w500,
                   ),
@@ -184,13 +189,13 @@ class ExplorePage extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(PhosphorIconsBold.ticket, size: 16, color: AppColors.textMain),
+                      Icon(PhosphorIconsBold.ticket, size: 16, color: context.colors.textMain),
                       const SizedBox(width: 6),
                       Text(
                         '即刻抢购',
-                        style: AppTextStyles.bodySmall.copyWith(
+                        style: context.textStyles.bodySmall.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textMain,
+                          color: context.colors.textMain,
                         ),
                       ),
                     ],
@@ -208,11 +213,11 @@ class ExplorePage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: AppTextStyles.h3),
+        Text(title, style: context.textStyles.h3),
         Text(
           '查看全部',
-          style: AppTextStyles.caption.copyWith(
-            color: AppColors.brandBlue,
+          style: context.textStyles.caption.copyWith(
+            color: context.colors.brandBlue,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -297,7 +302,7 @@ class ExplorePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.borderLight),
+        border: Border.all(color: context.colors.borderLight),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -334,7 +339,7 @@ class ExplorePage extends StatelessWidget {
                           color: Colors.black.withOpacity(0.5),
                           child: Text(
                             country,
-                            style: AppTextStyles.caption.copyWith(
+                            style: context.textStyles.caption.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
@@ -356,15 +361,15 @@ class ExplorePage extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+                  style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textMuted,
+                  style: context.textStyles.caption.copyWith(
+                    color: context.colors.textMuted,
                     fontSize: 10,
                   ),
                   maxLines: 1,
@@ -382,10 +387,10 @@ class ExplorePage extends StatelessWidget {
   Widget _buildAiGridItem(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.brandBlue.withOpacity(0.05),
+        color: context.colors.brandBlue.withOpacity(0.05),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: AppColors.brandBlue.withOpacity(0.3),
+          color: context.colors.brandBlue.withOpacity(0.3),
           width: 2,
           style: BorderStyle.solid, // Note: Flutter doesn't have internal dashed borders out of the box in simple Container
         ),
@@ -393,20 +398,20 @@ class ExplorePage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(PhosphorIconsFill.magicWand, color: AppColors.brandBlue, size: 32),
+          Icon(PhosphorIconsFill.magicWand, color: context.colors.brandBlue, size: 32),
           const SizedBox(height: 8),
           Text(
             '让 AI 帮你制定',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.brandBlue,
+            style: context.textStyles.bodyMedium.copyWith(
+              color: context.colors.brandBlue,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             '专属个性化路线',
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.brandBlue.withOpacity(0.8),
+            style: context.textStyles.caption.copyWith(
+              color: context.colors.brandBlue.withOpacity(0.8),
               fontSize: 11,
             ),
           ),

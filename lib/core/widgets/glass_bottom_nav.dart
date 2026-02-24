@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/app_colors.dart';
 
 class GlassBottomNavBar extends StatelessWidget {
@@ -100,7 +101,7 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected ? AppColors.textMain : AppColors.textMuted;
+    final color = isSelected ? context.colors.textMain : context.colors.textMuted;
     
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -109,21 +110,21 @@ class _NavBarItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return ScaleTransition(
-                scale: animation,
-                child: child,
-              );
-            },
-            child: Icon(
-              isSelected ? activeIcon : icon,
-              key: ValueKey<bool>(isSelected),
-              color: color,
-              size: 26,
-            ),
-          ),
+          isSelected
+              ? Icon(
+                  activeIcon,
+                  color: color,
+                  size: 26,
+                ).animate(key: ValueKey('active_$label')).scale(
+                      duration: 500.ms,
+                      curve: Curves.elasticOut,
+                      begin: const Offset(0.5, 0.5),
+                    )
+              : Icon(
+                  icon,
+                  color: color,
+                  size: 26,
+                ),
           const SizedBox(height: 4),
           Text(
             label,

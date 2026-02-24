@@ -26,16 +26,16 @@ class GlowTag extends StatelessWidget {
         curve: Curves.fastOutSlowIn,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.brandBlue : Colors.white,
+          color: isSelected ? context.colors.brandBlue : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.brandBlue : AppColors.borderLight,
+            color: isSelected ? context.colors.brandBlue : context.colors.borderLight,
             width: 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.brandBlue.withOpacity(0.3),
+                    color: context.colors.brandBlue.withOpacity(0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   )
@@ -55,15 +55,15 @@ class GlowTag extends StatelessWidget {
               Icon(
                 icon,
                 size: 14,
-                color: isSelected ? Colors.white : AppColors.textSecondary,
+                color: isSelected ? Colors.white : context.colors.textSecondary,
               ),
               const SizedBox(width: 6),
             ],
             Text(
               label,
-              style: AppTextStyles.bodySmall.copyWith(
+              style: context.textStyles.bodySmall.copyWith(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? Colors.white : AppColors.textMain,
+                color: isSelected ? Colors.white : context.colors.textMain,
               ),
             ),
           ],

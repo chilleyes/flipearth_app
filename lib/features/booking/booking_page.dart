@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/widgets/spring_button.dart';
 import '../profile/add_traveler_page.dart';
 
 class BookingPage extends StatefulWidget {
@@ -19,7 +20,7 @@ class _BookingPageState extends State<BookingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context),
@@ -42,7 +43,7 @@ class _BookingPageState extends State<BookingPage> {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
-            color: AppColors.textMain.withOpacity(0.95), // dark glass equivalent
+            color: context.colors.textMain.withOpacity(0.95), // dark glass equivalent
             padding: const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -59,12 +60,12 @@ class _BookingPageState extends State<BookingPage> {
                       children: [
                         Row(
                           children: [
-                            Text('London', style: AppTextStyles.h2.copyWith(color: Colors.white, fontSize: 18)),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: Icon(PhosphorIconsBold.arrowRight, color: AppColors.brandBlue, size: 14),
+                            Text('London', style: context.textStyles.h2.copyWith(color: Colors.white, fontSize: 18)),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Icon(PhosphorIconsBold.arrowRight, color: context.colors.brandBlue, size: 14),
                             ),
-                            Text('Paris', style: AppTextStyles.h2.copyWith(color: Colors.white, fontSize: 18)),
+                            Text('Paris', style: context.textStyles.h2.copyWith(color: Colors.white, fontSize: 18)),
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -72,16 +73,16 @@ class _BookingPageState extends State<BookingPage> {
                           children: [
                             Text(
                               '10 OCT',
-                              style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.bold, letterSpacing: 1.0),
+                              style: context.textStyles.caption.copyWith(color: context.colors.textSecondary, fontWeight: FontWeight.bold, letterSpacing: 1.0),
                             ),
                             Container(
                               width: 4, height: 4,
                               margin: const EdgeInsets.symmetric(horizontal: 6),
-                              decoration: const BoxDecoration(color: AppColors.textMuted, shape: BoxShape.circle),
+                              decoration: BoxDecoration(color: context.colors.textMuted, shape: BoxShape.circle),
                             ),
                             Text(
                               '1 ADULT',
-                              style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.bold, letterSpacing: 1.0),
+                              style: context.textStyles.caption.copyWith(color: context.colors.textSecondary, fontWeight: FontWeight.bold, letterSpacing: 1.0),
                             ),
                           ],
                         ),
@@ -147,17 +148,17 @@ class _BookingPageState extends State<BookingPage> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
+    return SpringButton(
       onTap: onTap,
       child: Container(
         width: 65,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.brandBlue : Colors.white.withOpacity(0.05),
+          color: isSelected ? context.colors.brandBlue : Colors.white.withOpacity(0.05),
           border: Border.all(color: isSelected ? const Color(0xFF38BDF8) : Colors.white.withOpacity(0.1)),
           borderRadius: BorderRadius.circular(12),
           boxShadow: isSelected ? [
-            BoxShadow(color: AppColors.brandBlue.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))
+            BoxShadow(color: context.colors.brandBlue.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))
           ] : null,
         ),
         child: Stack(
@@ -168,8 +169,8 @@ class _BookingPageState extends State<BookingPage> {
               children: [
                 Text(
                   date.toUpperCase(),
-                  style: AppTextStyles.caption.copyWith(
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                  style: context.textStyles.caption.copyWith(
+                    color: isSelected ? Colors.white : context.colors.textSecondary,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                     fontSize: 10,
                   ),
@@ -177,7 +178,7 @@ class _BookingPageState extends State<BookingPage> {
                 const SizedBox(height: 2),
                 Text(
                   price,
-                  style: AppTextStyles.bodyMedium.copyWith(
+                  style: context.textStyles.bodyMedium.copyWith(
                     color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
                     fontWeight: isSelected ? FontWeight.w900 : FontWeight.bold,
                     fontSize: 15,
@@ -195,7 +196,7 @@ class _BookingPageState extends State<BookingPage> {
                   decoration: BoxDecoration(
                     color: const Color(0xFF34D399), // emerald-400
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.textMain, width: 2),
+                    border: Border.all(color: context.colors.textMain, width: 2),
                   ),
                 ),
               ),
@@ -249,7 +250,7 @@ class _BookingPageState extends State<BookingPage> {
     required bool isFastest,
     required bool hasSufficientTickets,
   }) {
-    return GestureDetector(
+    return SpringButton(
       onTap: () {
         _showCheckoutBottomSheet(context);
       },
@@ -258,7 +259,7 @@ class _BookingPageState extends State<BookingPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isFastest ? AppColors.brandBlue.withOpacity(0.3) : AppColors.borderLight,
+            color: isFastest ? context.colors.brandBlue.withOpacity(0.3) : context.colors.borderLight,
           ),
           boxShadow: [
             BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 5)),
@@ -273,14 +274,14 @@ class _BookingPageState extends State<BookingPage> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppColors.brandBlue.withOpacity(0.1),
+                    color: context.colors.brandBlue.withOpacity(0.1),
                     borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(PhosphorIconsFill.lightning, color: AppColors.brandBlue, size: 12),
+                      Icon(PhosphorIconsFill.lightning, color: context.colors.brandBlue, size: 12),
                       const SizedBox(width: 4),
-                      Text('最快到达', style: AppTextStyles.caption.copyWith(color: AppColors.brandBlue, fontWeight: FontWeight.bold, fontSize: 10)),
+                      Text('最快到达', style: context.textStyles.caption.copyWith(color: context.colors.brandBlue, fontWeight: FontWeight.bold, fontSize: 10)),
                     ],
                   ),
                 ),
@@ -304,22 +305,22 @@ class _BookingPageState extends State<BookingPage> {
                         ),
                       ),
                       // Divider
-                      Container(width: 1, height: 60, color: AppColors.borderLight),
+                      Container(width: 1, height: 60, color: context.colors.borderLight),
                       // Price Column
                       Expanded(
                         flex: 4,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text('STANDARD起', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 0.5)),
+                            Text('STANDARD起', style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 0.5)),
                             const SizedBox(height: 4),
-                            Text(price, style: AppTextStyles.h1.copyWith(fontSize: 32, letterSpacing: -1.0)),
+                            Text(price, style: context.textStyles.h1.copyWith(fontSize: 32, letterSpacing: -1.0)),
                             if (hasSufficientTickets) ...[
                               const SizedBox(height: 4),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(color: const Color(0xFFECFDF5), borderRadius: BorderRadius.circular(4)), // emerald-50
-                                child: Text('余票充足', style: AppTextStyles.caption.copyWith(color: const Color(0xFF059669), fontWeight: FontWeight.w900, fontSize: 10)),
+                                child: Text('余票充足', style: context.textStyles.caption.copyWith(color: const Color(0xFF059669), fontWeight: FontWeight.w900, fontSize: 10)),
                               ),
                             ]
                           ],
@@ -332,24 +333,24 @@ class _BookingPageState extends State<BookingPage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
-                      color: AppColors.background,
-                      border: Border.all(color: AppColors.borderLight),
+                      color: context.colors.background,
+                      border: Border.all(color: context.colors.borderLight),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(PhosphorIconsFill.clock, color: AppColors.textMuted, size: 14),
+                        Icon(PhosphorIconsFill.clock, color: context.colors.textMuted, size: 14),
                         const SizedBox(width: 6),
-                        Text(duration, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.bold, fontSize: 11)),
+                        Text(duration, style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.bold, fontSize: 11)),
                         Container(
                           width: 4, height: 4,
                           margin: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: const BoxDecoration(color: AppColors.textMuted, shape: BoxShape.circle),
+                          decoration: BoxDecoration(color: context.colors.textMuted, shape: BoxShape.circle),
                         ),
-                        const Icon(PhosphorIconsFill.train, color: AppColors.textMuted, size: 14),
+                        Icon(PhosphorIconsFill.train, color: context.colors.textMuted, size: 14),
                         const SizedBox(width: 6),
-                        Text(trainNumber, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.bold, fontSize: 11)),
+                        Text(trainNumber, style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.bold, fontSize: 11)),
                       ],
                     ),
                   ),
@@ -367,19 +368,19 @@ class _BookingPageState extends State<BookingPage> {
       children: [
         SizedBox(
           width: 70,
-          child: Text(time, style: AppTextStyles.h2.copyWith(fontSize: 22, letterSpacing: -0.5)),
+          child: Text(time, style: context.textStyles.h2.copyWith(fontSize: 22, letterSpacing: -0.5)),
         ),
         Container(
           width: 10, height: 10,
           decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.circle,
-            border: Border.all(color: isStart ? AppColors.textMain : AppColors.brandBlue, width: 2),
+            border: Border.all(color: isStart ? context.colors.textMain : context.colors.brandBlue, width: 2),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(station, style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+          child: Text(station, style: context.textStyles.caption.copyWith(color: context.colors.textSecondary, fontWeight: FontWeight.bold)),
         ),
       ],
     );
@@ -416,10 +417,10 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
-      decoration: const BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
-        boxShadow: [
+      decoration: BoxDecoration(
+        color: context.colors.background,
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+        boxShadow: const [
           BoxShadow(color: Colors.black12, blurRadius: 50, offset: Offset(0, -20)),
         ],
       ),
@@ -430,7 +431,7 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
             child: Container(
               margin: const EdgeInsets.only(top: 12, bottom: 4),
               width: 48, height: 6,
-              decoration: BoxDecoration(color: AppColors.borderLight, borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(color: context.colors.borderLight, borderRadius: BorderRadius.circular(10)),
             ),
           ),
           // Header
@@ -442,9 +443,9 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('确认订单', style: AppTextStyles.h1.copyWith(fontSize: 20)),
+                    Text('确认订单', style: context.textStyles.h1.copyWith(fontSize: 20)),
                     const SizedBox(height: 2),
-                    Text('09:31 出发 · 伦敦至巴黎', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted)),
+                    Text('09:31 出发 · 伦敦至巴黎', style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted)),
                   ],
                 ),
                 GestureDetector(
@@ -452,7 +453,7 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
                   child: Container(
                     width: 32, height: 32,
                     decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                    child: const Icon(PhosphorIconsBold.x, size: 16, color: AppColors.textSecondary),
+                    child: Icon(PhosphorIconsBold.x, size: 16, color: context.colors.textSecondary),
                   ),
                 ),
               ],
@@ -464,7 +465,7 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               children: [
                 // Class Selector
-                Text('选择舱位等级', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                Text('选择舱位等级', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
@@ -490,18 +491,18 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
                               children: [
                                 Text(
                                   ticketClass['name']!,
-                                  style: AppTextStyles.caption.copyWith(
+                                  style: context.textStyles.caption.copyWith(
                                     fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
-                                    color: isSelected ? AppColors.textMain : AppColors.textMuted,
+                                    color: isSelected ? context.colors.textMain : context.colors.textMuted,
                                     fontSize: 13,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   '€${ticketClass['price']}',
-                                  style: AppTextStyles.caption.copyWith(
+                                  style: context.textStyles.caption.copyWith(
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                    color: AppColors.textMuted,
+                                    color: context.colors.textMuted,
                                     fontSize: 10,
                                   ),
                                 ),
@@ -521,21 +522,21 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.borderLight),
+                    border: Border.all(color: context.colors.borderLight),
                   ),
                   child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('乘车人信息', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                          Text('乘车人信息', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                           GestureDetector(
                             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddTravelerPage())),
                             child: Row(
                               children: [
-                                const Icon(PhosphorIconsBold.plus, color: AppColors.brandBlue, size: 14),
+                                Icon(PhosphorIconsBold.plus, color: context.colors.brandBlue, size: 14),
                                 const SizedBox(width: 4),
-                                Text('管理乘车人', style: AppTextStyles.caption.copyWith(color: AppColors.brandBlue, fontWeight: FontWeight.bold)),
+                                Text('管理乘车人', style: context.textStyles.caption.copyWith(color: context.colors.brandBlue, fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ),
@@ -544,23 +545,23 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
                       const SizedBox(height: 12),
                       Container(
                         padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.borderLight)),
+                        decoration: BoxDecoration(color: context.colors.background, borderRadius: BorderRadius.circular(12), border: Border.all(color: context.colors.borderLight)),
                         child: Row(
                           children: [
                             Container(
                               width: 40, height: 40,
-                              decoration: BoxDecoration(color: AppColors.brandBlue.withOpacity(0.1), shape: BoxShape.circle),
+                              decoration: BoxDecoration(color: context.colors.brandBlue.withOpacity(0.1), shape: BoxShape.circle),
                               alignment: Alignment.center,
-                              child: Text('ZH', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.brandBlue, fontWeight: FontWeight.bold)),
+                              child: Text('ZH', style: context.textStyles.bodyMedium.copyWith(color: context.colors.brandBlue, fontWeight: FontWeight.bold)),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('ZHAO / HANG', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                                  Text('ZHAO / HANG', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 2),
-                                  Text('护照: E1234****', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                                  Text('护照: E1234****', style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
                                 ],
                               ),
                             ),
@@ -579,22 +580,22 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.borderLight),
+                    border: Border.all(color: context.colors.borderLight),
                   ),
                   child: Column(
                     children: [
                       _buildSummaryRow('欧洲之星成人票 (${_classes[_selectedClassIndex]['name']})', '€${_classes[_selectedClassIndex]['price']}.00'),
                       const SizedBox(height: 12),
                       _buildSummaryRow('税费及服务费', '€0.00'),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(color: AppColors.borderLight, height: 1, thickness: 1),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Divider(color: context.colors.borderLight, height: 1, thickness: 1),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('总价', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 16)),
-                          Text('€${_classes[_selectedClassIndex]['price']}.00', style: AppTextStyles.h1.copyWith(fontSize: 24)),
+                          Text('总价', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text('€${_classes[_selectedClassIndex]['price']}.00', style: context.textStyles.h1.copyWith(fontSize: 24)),
                         ],
                       ),
                     ],
@@ -607,9 +608,9 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
           // Bottom Sticky Footer
           Container(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: Colors.white,
-              border: Border(top: BorderSide(color: AppColors.borderLight)),
+              border: Border(top: BorderSide(color: context.colors.borderLight)),
             ),
             child: Column(
               children: [
@@ -619,18 +620,18 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
                     Container(
                       width: 16, height: 16,
                       margin: const EdgeInsets.only(top: 2, right: 10),
-                      decoration: BoxDecoration(color: AppColors.textMain, borderRadius: BorderRadius.circular(4)),
+                      decoration: BoxDecoration(color: context.colors.textMain, borderRadius: BorderRadius.circular(4)),
                       child: const Icon(PhosphorIconsBold.check, color: Colors.white, size: 12),
                     ),
                     Expanded(
                       child: RichText(
                         text: TextSpan(
-                          style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w500),
-                          children: const [
-                            TextSpan(text: '购票即代表您同意 '),
-                            TextSpan(text: '退改签政策', style: TextStyle(color: AppColors.brandBlue, decoration: TextDecoration.underline)),
-                            TextSpan(text: ' 及 '),
-                            TextSpan(text: '服务条款', style: TextStyle(color: AppColors.brandBlue, decoration: TextDecoration.underline)),
+                          style: context.textStyles.caption.copyWith(color: context.colors.textSecondary, fontWeight: FontWeight.w500),
+                          children: [
+                            const TextSpan(text: '购票即代表您同意 '),
+                            TextSpan(text: '退改签政策', style: TextStyle(color: context.colors.brandBlue, decoration: TextDecoration.underline)),
+                            const TextSpan(text: ' 及 '),
+                            TextSpan(text: '服务条款', style: TextStyle(color: context.colors.brandBlue, decoration: TextDecoration.underline)),
                           ],
                         ),
                       ),
@@ -655,7 +656,7 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
                       children: [
                         const Icon(PhosphorIconsFill.appleLogo, color: Colors.white, size: 24),
                         const SizedBox(width: 8),
-                        Text('Pay €${_classes[_selectedClassIndex]['price']}.00', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                        Text('Pay €${_classes[_selectedClassIndex]['price']}.00', style: context.textStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                       ],
                     ),
                   ),
@@ -672,8 +673,8 @@ class _CheckoutBottomSheetState extends State<_CheckoutBottomSheet> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w500, fontSize: 13)),
-        Text(value, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+        Text(title, style: context.textStyles.caption.copyWith(color: context.colors.textSecondary, fontWeight: FontWeight.w500, fontSize: 13)),
+        Text(value, style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
       ],
     );
   }

@@ -54,7 +54,7 @@ class _PlannerPageState extends State<PlannerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: Stack(
         children: [
           CustomScrollView(
@@ -95,9 +95,9 @@ class _PlannerPageState extends State<PlannerPage> {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    AppColors.background,
-                    AppColors.background.withOpacity(0.9),
-                    AppColors.background.withOpacity(0.0),
+                    context.colors.background,
+                    context.colors.background.withOpacity(0.9),
+                    context.colors.background.withOpacity(0.0),
                   ],
                 ),
               ),
@@ -141,12 +141,12 @@ class _PlannerPageState extends State<PlannerPage> {
                   Container(
                     width: 40,
                     height: 40,
-                    decoration: const BoxDecoration(
-                      color: AppColors.borderLight,
+                    decoration: BoxDecoration(
+                      color: context.colors.borderLight,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(PhosphorIconsRegular.paperPlaneRight,
-                        color: AppColors.brandBlue, size: 20),
+                    child: Icon(PhosphorIconsRegular.paperPlaneRight,
+                        color: context.colors.brandBlue, size: 20),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -154,19 +154,19 @@ class _PlannerPageState extends State<PlannerPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('你想去哪儿？',
-                            style: AppTextStyles.bodySmall),
-                        Text('欧洲多国畅游', style: AppTextStyles.h3),
+                            style: context.textStyles.bodySmall),
+                        Text('欧洲多国畅游', style: context.textStyles.h3),
                       ],
                     ),
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 20, top: 8, bottom: 8),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
                 child: SizedBox(
                   height: 24,
                   child: VerticalDivider(
-                    color: AppColors.borderLight,
+                    color: context.colors.borderLight,
                     thickness: 2,
                   ),
                 ),
@@ -177,12 +177,12 @@ class _PlannerPageState extends State<PlannerPage> {
                   Container(
                     width: 40,
                     height: 40,
-                    decoration: const BoxDecoration(
-                      color: AppColors.borderLight,
+                    decoration: BoxDecoration(
+                      color: context.colors.borderLight,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(PhosphorIconsRegular.calendarBlank,
-                        color: AppColors.textSecondary, size: 20),
+                    child: Icon(PhosphorIconsRegular.calendarBlank,
+                        color: context.colors.textSecondary, size: 20),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -190,8 +190,8 @@ class _PlannerPageState extends State<PlannerPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('出发日期',
-                            style: AppTextStyles.bodySmall),
-                        Text('随时出发', style: AppTextStyles.h3),
+                            style: context.textStyles.bodySmall),
+                        Text('随时出发', style: context.textStyles.h3),
                       ],
                     ),
                   ),
@@ -203,7 +203,7 @@ class _PlannerPageState extends State<PlannerPage> {
         const SizedBox(height: 24),
 
         // Companions
-        Text('和谁一起', style: AppTextStyles.h3),
+        Text('和谁一起', style: context.textStyles.h3),
         const SizedBox(height: 12),
         Wrap(
           spacing: 12,
@@ -241,8 +241,8 @@ class _PlannerPageState extends State<PlannerPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('热门路线灵感', style: AppTextStyles.h3),
-            Icon(PhosphorIconsRegular.arrowRight, size: 18, color: AppColors.textMuted),
+            Text('热门路线灵感', style: context.textStyles.h3),
+            Icon(PhosphorIconsRegular.arrowRight, size: 18, color: context.colors.textMuted),
           ],
         ),
         const SizedBox(height: 16),
@@ -307,9 +307,9 @@ class _PlannerPageState extends State<PlannerPage> {
                   child: Column(
                     children: [
                       _buildStationField('出发地', _fromStation, PhosphorIconsFill.mapPin, true),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 36),
-                        child: Divider(height: 24, color: AppColors.borderLight),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 36),
+                        child: Divider(height: 24, color: context.colors.borderLight),
                       ),
                       _buildStationField('目的地', _toStation, PhosphorIconsFill.mapPinLine, false),
                     ],
@@ -325,17 +325,17 @@ class _PlannerPageState extends State<PlannerPage> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.borderLight),
+                        border: Border.all(color: context.colors.borderLight),
                         boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
                       ),
-                      child: const Icon(PhosphorIconsBold.arrowsDownUp, color: AppColors.brandBlue, size: 20),
+                      child: Icon(PhosphorIconsBold.arrowsDownUp, color: context.colors.brandBlue, size: 20),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColors.borderLight),
+          Divider(height: 1, color: context.colors.borderLight),
           // Date Row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -349,7 +349,7 @@ class _PlannerPageState extends State<PlannerPage> {
                     () => _pickDate(true),
                   ),
                 ),
-                Container(width: 1, height: 40, color: AppColors.borderLight),
+                Container(width: 1, height: 40, color: context.colors.borderLight),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16),
@@ -365,7 +365,7 @@ class _PlannerPageState extends State<PlannerPage> {
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColors.borderLight),
+          Divider(height: 1, color: context.colors.borderLight),
           // Passengers Row
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -389,7 +389,7 @@ class _PlannerPageState extends State<PlannerPage> {
                       children: [
                         const Icon(PhosphorIconsFill.warningCircle, color: Colors.orange, size: 16),
                         const SizedBox(width: 8),
-                         Text('出发地和目的地不能相同', style: AppTextStyles.caption.copyWith(color: Colors.orange)),
+                         Text('出发地和目的地不能相同', style: context.textStyles.caption.copyWith(color: Colors.orange)),
                       ],
                     ),
                   ),
@@ -399,12 +399,12 @@ class _PlannerPageState extends State<PlannerPage> {
                   child: ElevatedButton(
                     onPressed: _isFormValid ? () {} : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _isFormValid ? AppColors.brandBlue : AppColors.borderLight,
+                      backgroundColor: _isFormValid ? context.colors.brandBlue : context.colors.borderLight,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       elevation: 0,
                     ),
-                    child: Text('查找车票', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: _isFormValid ? Colors.white : AppColors.textMuted)),
+                    child: Text('查找车票', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: _isFormValid ? Colors.white : context.colors.textMuted)),
                   ),
                 ),
               ],
@@ -437,15 +437,15 @@ class _PlannerPageState extends State<PlannerPage> {
       },
       child: Row(
         children: [
-          Icon(icon, color: AppColors.brandBlue, size: 24),
+          Icon(icon, color: context.colors.brandBlue, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                Text(label, style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
                 const SizedBox(height: 4),
-                Text(value, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 18)),
+                Text(value, style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 18)),
               ],
             ),
           ),
@@ -460,19 +460,19 @@ class _PlannerPageState extends State<PlannerPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, color: isPlaceholder ? AppColors.textMain : AppColors.brandBlue, size: 24),
+          Icon(icon, color: isPlaceholder ? context.colors.textMain : context.colors.brandBlue, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+                Text(label, style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: AppTextStyles.bodyMedium.copyWith(
+                  style: context.textStyles.bodyMedium.copyWith(
                     fontWeight: isPlaceholder ? FontWeight.w500 : FontWeight.bold,
-                    color: isPlaceholder ? AppColors.textMain : AppColors.textMain,
+                    color: isPlaceholder ? context.colors.textMain : context.colors.textMain,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -498,8 +498,8 @@ class _PlannerPageState extends State<PlannerPage> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.brandBlue,
+            colorScheme: ColorScheme.light(
+              primary: context.colors.brandBlue,
             ),
           ),
           child: child!,
@@ -569,7 +569,7 @@ class _PlannerPageState extends State<PlannerPage> {
       expandedHeight: 280,
       pinned: true,
       stretch: true,
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: const [
           StretchMode.zoomBackground,
@@ -584,8 +584,8 @@ class _PlannerPageState extends State<PlannerPage> {
             ),
             // The Dark Gradient Mask
             Container(
-              decoration: const BoxDecoration(
-                gradient: AppColors.heroGradient,
+              decoration: BoxDecoration(
+                gradient: context.colors.heroGradient,
               ),
             ),
             // Text Content Overlay
@@ -598,7 +598,7 @@ class _PlannerPageState extends State<PlannerPage> {
                 children: [
                   Text(
                     '探索您的下一站\n完美欧洲之旅',
-                    style: AppTextStyles.h1.copyWith(
+                    style: context.textStyles.h1.copyWith(
                       color: Colors.white,
                       height: 1.2,
                     ),
@@ -606,7 +606,7 @@ class _PlannerPageState extends State<PlannerPage> {
                   const SizedBox(height: 8),
                   Text(
                     'FlipEarth 官方直连，极速出票。',
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    style: context.textStyles.bodyMedium.copyWith(
                       color: Colors.white.withOpacity(0.9),
                     ),
                   ),
@@ -649,11 +649,11 @@ class _PlannerPageState extends State<PlannerPage> {
               heightFactor: 1.0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.brandBlue,
+                  color: context.colors.brandBlue,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.brandBlue.withOpacity(0.3),
+                      color: context.colors.brandBlue.withOpacity(0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -717,7 +717,7 @@ class _TabLabel extends StatelessWidget {
       style: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        color: isSelected ? Colors.white : AppColors.textSecondary,
+        color: isSelected ? Colors.white : context.colors.textSecondary,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -725,7 +725,7 @@ class _TabLabel extends StatelessWidget {
           Icon(
             icon,
             size: 16,
-            color: isSelected ? Colors.white : AppColors.textSecondary,
+            color: isSelected ? Colors.white : context.colors.textSecondary,
           ),
           const SizedBox(width: 6),
           Text(title),

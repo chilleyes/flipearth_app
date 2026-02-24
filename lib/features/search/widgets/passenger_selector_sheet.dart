@@ -58,7 +58,7 @@ class _PassengerSelectorSheetState extends State<PassengerSelectorSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.borderLight,
+                  color: context.colors.borderLight,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -67,7 +67,7 @@ class _PassengerSelectorSheetState extends State<PassengerSelectorSheet> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('选择乘客', style: AppTextStyles.h2.copyWith(fontSize: 22)),
+                child: Text('选择乘客', style: context.textStyles.h2.copyWith(fontSize: 22)),
               ),
             ),
             const SizedBox(height: 24),
@@ -82,14 +82,14 @@ class _PassengerSelectorSheetState extends State<PassengerSelectorSheet> {
                     onChanged: (v) => setState(() => _adults = v),
                     min: 1,
                   ),
-                  const Divider(height: 32, color: AppColors.borderLight),
+                  Divider(height: 32, color: context.colors.borderLight),
                   _buildCounterRow(
                     title: '青年',
                     subtitle: '12 - 25 岁',
                     value: _youths,
                     onChanged: (v) => setState(() => _youths = v),
                   ),
-                  const Divider(height: 32, color: AppColors.borderLight),
+                  Divider(height: 32, color: context.colors.borderLight),
                   _buildCounterRow(
                     title: '儿童',
                     subtitle: '4 - 11 岁',
@@ -108,7 +108,7 @@ class _PassengerSelectorSheetState extends State<PassengerSelectorSheet> {
                 child: ElevatedButton(
                   onPressed: _confirm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.textMain,
+                    backgroundColor: context.colors.textMain,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: const Text('确认', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
@@ -135,9 +135,9 @@ class _PassengerSelectorSheetState extends State<PassengerSelectorSheet> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+            Text(title, style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text(subtitle, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted)),
+            Text(subtitle, style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
           ],
         ),
         Row(
@@ -147,11 +147,11 @@ class _PassengerSelectorSheetState extends State<PassengerSelectorSheet> {
               child: Container(
                 width: 36, height: 36,
                 decoration: BoxDecoration(
-                  color: value > min ? Colors.white : AppColors.background,
-                  border: Border.all(color: value > min ? AppColors.borderLight : Colors.transparent),
+                  color: value > min ? Colors.white : context.colors.background,
+                  border: Border.all(color: value > min ? context.colors.borderLight : Colors.transparent),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(PhosphorIconsBold.minus, size: 16, color: value > min ? AppColors.textMain : AppColors.textMuted),
+                child: Icon(PhosphorIconsBold.minus, size: 16, color: value > min ? context.colors.textMain : context.colors.textMuted),
               ),
             ),
             SizedBox(
@@ -159,7 +159,7 @@ class _PassengerSelectorSheetState extends State<PassengerSelectorSheet> {
               child: Text(
                 value.toString(),
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
+                style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ),
             GestureDetector(
@@ -168,10 +168,10 @@ class _PassengerSelectorSheetState extends State<PassengerSelectorSheet> {
                 width: 36, height: 36,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: AppColors.borderLight),
+                  border: Border.all(color: context.colors.borderLight),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(PhosphorIconsBold.plus, size: 16, color: AppColors.textMain),
+                child: Icon(PhosphorIconsBold.plus, size: 16, color: context.colors.textMain),
               ),
             ),
           ],

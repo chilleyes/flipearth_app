@@ -23,9 +23,18 @@ class FlipEarthApp extends StatelessWidget {
       title: 'FlipEarth',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: AppColors.background,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: AppColorsExtension.light.background,
         useMaterial3: true,
+        extensions: const [AppColorsExtension.light],
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: AppColorsExtension.dark.background,
+        useMaterial3: true,
+        extensions: const [AppColorsExtension.dark],
+      ),
+      themeMode: ThemeMode.system,
       initialRoute: '/',
       routes: {
         '/': (context) => const WelcomePage(),

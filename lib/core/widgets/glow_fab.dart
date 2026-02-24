@@ -66,7 +66,7 @@ class _GlowFabState extends State<GlowFab> with SingleTickerProviderStateMixin {
                     opacity: 0.4 + (_controller.value * 0.4), // pulsate between 0.4 and 0.8
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: AppColors.fabGlowGradient,
+                        gradient: context.colors.fabGlowGradient,
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: BackdropFilter(
@@ -85,7 +85,7 @@ class _GlowFabState extends State<GlowFab> with SingleTickerProviderStateMixin {
                   filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppColors.textMain.withOpacity(0.9), // slate-900/90
+                      color: context.colors.textMain.withOpacity(0.9), // slate-900/90
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: Colors.white.withOpacity(0.1),
@@ -97,11 +97,11 @@ class _GlowFabState extends State<GlowFab> with SingleTickerProviderStateMixin {
                       children: [
                         Icon(
                           widget.icon,
-                          color: AppColors.brandBlue,
+                          color: context.colors.brandBlue,
                           size: 20,
                           shadows: [
                             BoxShadow(
-                              color: AppColors.brandBlue.withOpacity(0.8),
+                              color: context.colors.brandBlue.withOpacity(0.8),
                               blurRadius: 8,
                             ),
                           ],
@@ -109,7 +109,7 @@ class _GlowFabState extends State<GlowFab> with SingleTickerProviderStateMixin {
                         const SizedBox(width: 8),
                         Text(
                           widget.label,
-                          style: AppTextStyles.bodyLarge.copyWith(
+                          style: context.textStyles.bodyLarge.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),

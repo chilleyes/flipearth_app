@@ -55,7 +55,7 @@ class WelcomePage extends StatelessWidget {
                     children: [
                       const Icon(PhosphorIconsFill.planet, color: Colors.white, size: 20),
                       const SizedBox(width: 8),
-                      Text('FlipEarth', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic)),
+                      Text('FlipEarth', style: context.textStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic)),
                     ],
                   ),
                 ),
@@ -69,9 +69,9 @@ class WelcomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('探索欧洲，\n触手可及。', style: AppTextStyles.h1.copyWith(color: Colors.white, fontSize: 42, height: 1.1, letterSpacing: -1.0)),
+                Text('探索欧洲，\n触手可及。', style: context.textStyles.h1.copyWith(color: Colors.white, fontSize: 42, height: 1.1, letterSpacing: -1.0)),
                 const SizedBox(height: 16),
-                Text('AI 智能规划，官方直达购票，\n开启您的纯粹旅行体验。', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary, height: 1.5, fontWeight: FontWeight.w500)),
+                Text('AI 智能规划，官方直达购票，\n开启您的纯粹旅行体验。', style: context.textStyles.bodyMedium.copyWith(color: context.colors.textSecondary, height: 1.5, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 40),
 
                 // Apple SignIn Button
@@ -90,9 +90,9 @@ class WelcomePage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(PhosphorIconsFill.appleLogo, color: AppColors.textMain, size: 22),
+                        Icon(PhosphorIconsFill.appleLogo, color: context.colors.textMain, size: 22),
                         const SizedBox(width: 8),
-                        Text('Sign in with Apple', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMain, fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text('Sign in with Apple', style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMain, fontWeight: FontWeight.bold, fontSize: 16)),
                       ],
                     ),
                   ),
@@ -118,7 +118,7 @@ class WelcomePage extends StatelessWidget {
                           children: [
                             const Icon(PhosphorIconsBold.envelopeSimple, color: Colors.white, size: 20),
                             const SizedBox(width: 8),
-                            Text('邮箱登录', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text('邮箱登录', style: context.textStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                           ],
                         ),
                       ),
@@ -131,7 +131,7 @@ class WelcomePage extends StatelessWidget {
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.w500),
+                      style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.w500),
                       children: [
                         const TextSpan(text: '继续即代表您同意 '),
                         TextSpan(text: '服务条款', style: TextStyle(color: Colors.white, decoration: TextDecoration.underline, decorationColor: Colors.white.withOpacity(0.5))),

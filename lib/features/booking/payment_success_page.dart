@@ -51,7 +51,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> with SingleTick
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
@@ -91,11 +91,11 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> with SingleTick
                 opacity: _opacityAnimation,
                 child: Column(
                   children: [
-                    Text('支付成功！', style: AppTextStyles.h1.copyWith(fontSize: 32, letterSpacing: -1.0)),
+                    Text('支付成功！', style: context.textStyles.h1.copyWith(fontSize: 32, letterSpacing: -1.0)),
                     const SizedBox(height: 12),
                     Text(
                       '您的欧洲之星车票已出票成功',
-                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted, fontSize: 16),
+                      style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 32),
@@ -106,23 +106,23 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> with SingleTick
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.borderLight),
+                        border: Border.all(color: context.colors.borderLight),
                       ),
                       child: Column(
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('订单编号', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted)),
-                              Text('FE-889341', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                              Text('订单编号', style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted)),
+                              Text('FE-889341', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                             ],
                           ),
-                          const Divider(height: 24, color: AppColors.borderLight),
+                          Divider(height: 24, color: context.colors.borderLight),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('实付金额', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted)),
-                              Text('€ 47.00', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: AppColors.brandBlue)),
+                              Text('实付金额', style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted)),
+                              Text('€ 47.00', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: context.colors.brandBlue)),
                             ],
                           ),
                         ],
@@ -148,7 +148,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> with SingleTick
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MyTicketsPage()));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.brandBlue,
+                          backgroundColor: context.colors.brandBlue,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),
                         child: const Text('查看我的车票', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
@@ -166,7 +166,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> with SingleTick
                         style: TextButton.styleFrom(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),
-                        child: Text('返回首页', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.bold)),
+                        child: Text('返回首页', style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],

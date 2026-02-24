@@ -50,7 +50,7 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.borderLight,
+                  color: context.colors.borderLight,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -61,7 +61,7 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('确认付款', style: AppTextStyles.h2.copyWith(fontSize: 22)),
+                  Text('确认付款', style: context.textStyles.h2.copyWith(fontSize: 22)),
                   const SizedBox(height: 24),
                   
                   // Price Breakdown
@@ -69,20 +69,20 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
                   const SizedBox(height: 12),
                   _buildPriceRow('服务费', '€ 2.00'),
                   const SizedBox(height: 16),
-                  const Divider(height: 1, color: AppColors.borderLight),
+                  Divider(height: 1, color: context.colors.borderLight),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('总计', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
-                      Text('€ 47.00', style: AppTextStyles.h2.copyWith(fontSize: 24, color: AppColors.textMain)),
+                      Text('总计', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                      Text('€ 47.00', style: context.textStyles.h2.copyWith(fontSize: 24, color: context.colors.textMain)),
                     ],
                   ),
                   
                   const SizedBox(height: 32),
                   
                   // Payment Methods
-                  Text('选择支付方式', style: AppTextStyles.h3),
+                  Text('选择支付方式', style: context.textStyles.h3),
                   const SizedBox(height: 16),
                   
                   // Mock Apple Pay Button
@@ -97,12 +97,12 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
                       ),
                       child: _isProcessing 
                         ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                        : Row(
+                        : const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(PhosphorIconsFill.appleLogo, color: Colors.white, size: 20),
-                              const SizedBox(width: 6),
-                              const Text('Pay', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                              Icon(PhosphorIconsFill.appleLogo, color: Colors.white, size: 20),
+                              SizedBox(width: 6),
+                              Text('Pay', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                             ],
                           ),
                     ),
@@ -117,15 +117,15 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
                     child: OutlinedButton(
                       onPressed: _isProcessing ? null : _handlePayment,
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppColors.borderLight),
+                        side: BorderSide(color: context.colors.borderLight),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(PhosphorIconsRegular.creditCard, color: AppColors.textMain, size: 20),
+                          Icon(PhosphorIconsRegular.creditCard, color: context.colors.textMain, size: 20),
                           const SizedBox(width: 8),
-                          Text('信用卡 / 借记卡', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                          Text('信用卡 / 借记卡', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -145,8 +145,8 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted)),
-        Text(amount, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+        Text(label, style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted)),
+        Text(amount, style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
       ],
     );
   }

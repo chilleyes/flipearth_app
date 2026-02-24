@@ -25,7 +25,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: Stack(
         children: [
           _buildChatList(),
@@ -58,13 +58,13 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 Column(
                   children: [
-                    Text('FlipEarth 智能助理', style: AppTextStyles.h2.copyWith(fontSize: 17)),
+                    Text('FlipEarth 智能助理', style: context.textStyles.h2.copyWith(fontSize: 17)),
                     const SizedBox(height: 2),
                     Row(
                       children: [
                         Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)), // emerald-500
                         const SizedBox(width: 4),
-                        Text('在线', style: AppTextStyles.caption.copyWith(color: const Color(0xFF10B981), fontWeight: FontWeight.bold)),
+                        Text('在线', style: context.textStyles.caption.copyWith(color: const Color(0xFF10B981), fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -76,7 +76,7 @@ class _ChatPageState extends State<ChatPage> {
                   child: Container(
                     width: 40, height: 40,
                     decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: const Icon(PhosphorIconsBold.userCircleGear, size: 20, color: AppColors.textSecondary),
+                    child: Icon(PhosphorIconsBold.userCircleGear, size: 20, color: context.colors.textSecondary),
                   ),
                 ),
               ],
@@ -90,18 +90,18 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildChatList() {
     return ListView(
       controller: _scrollController,
-      padding: EdgeInsets.only(top: 110, bottom: 150, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 110, bottom: 150, left: 20, right: 20),
       children: [
         Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Text('今天 09:41', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.bold)),
+            child: Text('今天 09:41', style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.bold)),
           ),
         ),
         _buildAssistantMessage(
           child: RichText(
             text: TextSpan(
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMain, height: 1.5, fontWeight: FontWeight.w500),
+              style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMain, height: 1.5, fontWeight: FontWeight.w500),
               children: const [
                 TextSpan(text: '您好杭先生！我是您的专属旅行助理。关于您下周伦敦到巴黎的 '),
                 TextSpan(text: '#EST-9014-ABC', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -119,7 +119,7 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               RichText(
                 text: TextSpan(
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMain, height: 1.5, fontWeight: FontWeight.w500),
+                  style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMain, height: 1.5, fontWeight: FontWeight.w500),
                   children: const [
                     TextSpan(text: '您购买的是 '),
                     TextSpan(text: 'Eurostar Standard', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -137,15 +137,15 @@ class _ChatPageState extends State<ChatPage> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: context.colors.background,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.borderLight),
+                    border: Border.all(color: context.colors.borderLight),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('立即办理改签', style: AppTextStyles.caption.copyWith(color: AppColors.brandBlue, fontWeight: FontWeight.bold)),
-                      const Icon(PhosphorIconsBold.arrowRight, color: AppColors.brandBlue, size: 14),
+                      Text('立即办理改签', style: context.textStyles.caption.copyWith(color: context.colors.brandBlue, fontWeight: FontWeight.bold)),
+                      Icon(PhosphorIconsBold.arrowRight, color: context.colors.brandBlue, size: 14),
                     ],
                   ),
                 ),
@@ -164,10 +164,10 @@ class _ChatPageState extends State<ChatPage> {
         Container(
           width: 4, height: 4,
           margin: const EdgeInsets.only(top: 8, right: 8),
-          decoration: const BoxDecoration(color: AppColors.brandBlue, shape: BoxShape.circle),
+          decoration: BoxDecoration(color: context.colors.brandBlue, shape: BoxShape.circle),
         ),
         Expanded(
-          child: Text(text, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w500)),
+          child: Text(text, style: context.textStyles.bodyMedium.copyWith(color: context.colors.textSecondary, fontWeight: FontWeight.w500)),
         ),
       ],
     );
@@ -180,10 +180,10 @@ class _ChatPageState extends State<ChatPage> {
         Container(
           width: 32, height: 32,
           margin: const EdgeInsets.only(top: 4, right: 12),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [AppColors.brandBlue, Color(0xFFA855F7)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [context.colors.brandBlue, const Color(0xFFA855F7)], begin: Alignment.topLeft, end: Alignment.bottomRight),
             shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
           ),
           alignment: Alignment.center,
           child: const Icon(PhosphorIconsFill.planet, color: Colors.white, size: 16),
@@ -194,7 +194,7 @@ class _ChatPageState extends State<ChatPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: const BorderRadius.only(topRight: Radius.circular(20), bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-              border: Border.all(color: AppColors.borderLight),
+              border: Border.all(color: context.colors.borderLight),
               boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 5))],
             ),
             child: child,
@@ -215,11 +215,11 @@ class _ChatPageState extends State<ChatPage> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.brandBlue,
+              color: context.colors.brandBlue,
               borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-              boxShadow: [BoxShadow(color: AppColors.brandBlue.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 5))],
+              boxShadow: [BoxShadow(color: context.colors.brandBlue.withOpacity(0.2), blurRadius: 15, offset: const Offset(0, 5))],
             ),
-            child: Text(text, style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, height: 1.5, fontWeight: FontWeight.w500)),
+            child: Text(text, style: context.textStyles.bodyMedium.copyWith(color: Colors.white, height: 1.5, fontWeight: FontWeight.w500)),
           ),
         ),
         Container(
@@ -227,7 +227,7 @@ class _ChatPageState extends State<ChatPage> {
           margin: const EdgeInsets.only(top: 4, left: 12),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.borderLight),
+            border: Border.all(color: context.colors.borderLight),
             image: const DecorationImage(
               image: NetworkImage('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'),
               fit: BoxFit.cover,
@@ -264,9 +264,9 @@ class _ChatPageState extends State<ChatPage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: context.colors.background,
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: AppColors.borderLight),
+                    border: Border.all(color: context.colors.borderLight),
                   ),
                   child: Row(
                     children: [
@@ -276,16 +276,16 @@ class _ChatPageState extends State<ChatPage> {
                           controller: _messageController,
                           decoration: InputDecoration(
                             hintText: '输入您的问题...',
-                            hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+                            hintStyle: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted),
                             border: InputBorder.none,
                             isDense: true,
                           ),
-                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMain, fontWeight: FontWeight.w500),
+                          style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMain, fontWeight: FontWeight.w500),
                         ),
                       ),
                       Container(
                         width: 36, height: 36,
-                        decoration: const BoxDecoration(color: AppColors.brandBlue, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)]),
+                        decoration: BoxDecoration(color: context.colors.brandBlue, shape: BoxShape.circle, boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)]),
                         child: const Icon(PhosphorIconsBold.paperPlaneRight, color: Colors.white, size: 18),
                       ),
                     ],
@@ -306,11 +306,11 @@ class _ChatPageState extends State<ChatPage> {
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: context.colors.background,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.borderLight),
+          border: Border.all(color: context.colors.borderLight),
         ),
-        child: Text(text, style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+        child: Text(text, style: context.textStyles.caption.copyWith(color: context.colors.textSecondary, fontWeight: FontWeight.bold)),
       ),
     );
   }

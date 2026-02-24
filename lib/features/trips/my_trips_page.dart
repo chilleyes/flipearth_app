@@ -16,7 +16,7 @@ class MyTripsPage extends StatefulWidget {
 
 class _MyTripsPageState extends State<MyTripsPage> {
   bool _isLoading = true;
-  bool _hasTrips = false; // Toggle this to test
+  final bool _hasTrips = false; // Toggle this to test
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _MyTripsPageState extends State<MyTripsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: CustomScrollView(
         slivers: [
           _buildAppBar(),
@@ -78,13 +78,13 @@ class _MyTripsPageState extends State<MyTripsPage> {
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
         child: Container(
-          color: AppColors.borderLight,
+          color: context.colors.borderLight,
           height: 1,
         ),
       ),
       title: Text(
         '我的行程',
-        style: AppTextStyles.h1.copyWith(fontSize: 28),
+        style: context.textStyles.h1.copyWith(fontSize: 28),
       ),
     );
   }
@@ -101,10 +101,10 @@ class _MyTripsPageState extends State<MyTripsPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.brandBlue.withOpacity(0.4), width: 2), // Highlight for LIVE
+          border: Border.all(color: context.colors.brandBlue.withOpacity(0.4), width: 2), // Highlight for LIVE
           boxShadow: [
             BoxShadow(
-              color: AppColors.brandBlue.withOpacity(0.15),
+              color: context.colors.brandBlue.withOpacity(0.15),
               blurRadius: 24,
               offset: const Offset(0, 10),
             ),
@@ -173,15 +173,15 @@ class _MyTripsPageState extends State<MyTripsPage> {
                 children: [
                   Text(
                     '伦敦 & 巴黎 双城之旅',
-                    style: AppTextStyles.h2.copyWith(fontSize: 19),
+                    style: context.textStyles.h2.copyWith(fontSize: 19),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '10月1日 - 10月7日 · 2城7天',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textMuted,
+                    style: context.textStyles.bodySmall.copyWith(
+                      color: context.colors.textMuted,
                       fontWeight: FontWeight.w500,
                     ),
                     maxLines: 1,
@@ -195,18 +195,18 @@ class _MyTripsPageState extends State<MyTripsPage> {
                         child: TextButton(
                           onPressed: () {},
                           style: TextButton.styleFrom(
-                            backgroundColor: AppColors.background, // slate-50
+                            backgroundColor: context.colors.background, // slate-50
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
-                              side: const BorderSide(color: AppColors.borderLight),
+                              side: BorderSide(color: context.colors.borderLight),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                           child: Text(
                             '查看地图',
-                            style: AppTextStyles.bodyMedium.copyWith(
+                            style: context.textStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textSecondary,
+                              color: context.colors.textSecondary,
                             ),
                           ),
                         ),
@@ -216,7 +216,7 @@ class _MyTripsPageState extends State<MyTripsPage> {
                         child: TextButton(
                           onPressed: () {},
                           style: TextButton.styleFrom(
-                            backgroundColor: AppColors.brandBlue.withOpacity(0.1),
+                            backgroundColor: context.colors.brandBlue.withOpacity(0.1),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -224,9 +224,9 @@ class _MyTripsPageState extends State<MyTripsPage> {
                           ),
                           child: Text(
                             '继续规划',
-                            style: AppTextStyles.bodyMedium.copyWith(
+                            style: context.textStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.brandBlue,
+                              color: context.colors.brandBlue,
                             ),
                           ),
                         ),
@@ -250,7 +250,7 @@ class _MyTripsPageState extends State<MyTripsPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: AppColors.brandBlue.withOpacity(0.8),
+            color: context.colors.brandBlue.withOpacity(0.8),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -267,7 +267,7 @@ class _MyTripsPageState extends State<MyTripsPage> {
               const SizedBox(width: 6),
               Text(
                 '行程中 (LIVE)',
-                style: AppTextStyles.caption.copyWith(
+                style: context.textStyles.caption.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
@@ -296,7 +296,7 @@ class _MyTripsPageState extends State<MyTripsPage> {
             children: [
               Icon(icon, color: Colors.white, size: 14),
               const SizedBox(width: 4),
-              Text(text, style: AppTextStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+              Text(text, style: context.textStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -317,19 +317,19 @@ class _MyTripsPageState extends State<MyTripsPage> {
                Row(
                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                  children: [
-                   Text('伦敦', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                   Text('伦敦', style: context.textStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
                    const SizedBox(width: 8),
                    Expanded(
                      child: Text(
                        '预计 45 分钟后抵达', 
-                       style: AppTextStyles.caption.copyWith(color: AppColors.brandBlue, fontWeight: FontWeight.bold),
+                       style: context.textStyles.caption.copyWith(color: context.colors.brandBlue, fontWeight: FontWeight.bold),
                        textAlign: TextAlign.center,
                        maxLines: 1,
                        overflow: TextOverflow.ellipsis,
                      ),
                    ),
                    const SizedBox(width: 8),
-                   Text('巴黎', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                   Text('巴黎', style: context.textStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
                  ],
                ),
                const SizedBox(height: 12),
@@ -352,10 +352,10 @@ class _MyTripsPageState extends State<MyTripsPage> {
                          height: 4,
                          width: constraints.maxWidth * progress,
                          decoration: BoxDecoration(
-                           color: AppColors.brandBlue,
+                           color: context.colors.brandBlue,
                            borderRadius: BorderRadius.circular(2),
                            boxShadow: [
-                             BoxShadow(color: AppColors.brandBlue.withOpacity(0.8), blurRadius: 8),
+                             BoxShadow(color: context.colors.brandBlue.withOpacity(0.8), blurRadius: 8),
                            ],
                          ),
                        ),
@@ -368,7 +368,7 @@ class _MyTripsPageState extends State<MyTripsPage> {
                              shape: BoxShape.circle,
                              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
                            ),
-                           child: const Icon(PhosphorIconsFill.train, color: AppColors.brandBlue, size: 14),
+                           child: Icon(PhosphorIconsFill.train, color: context.colors.brandBlue, size: 14),
                          ),
                        ),
                      ],

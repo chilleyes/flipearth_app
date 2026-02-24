@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../booking/widgets/checkout_sheet.dart';
 import '../booking/seat_selection_page.dart';
+import '../../core/widgets/spring_button.dart';
 
 class AddTravelerPage extends StatefulWidget {
   const AddTravelerPage({super.key});
@@ -90,7 +91,7 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: Stack(
         children: [
           CustomScrollView(
@@ -123,7 +124,7 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
   Widget _buildHeader() {
     return SliverAppBar(
       pinned: true,
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
@@ -137,12 +138,12 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.borderLight),
+                border: Border.all(color: context.colors.borderLight),
               ),
               child: const Icon(PhosphorIconsBold.x, size: 18),
             ),
           ),
-          Text('新增乘车人', style: AppTextStyles.h2.copyWith(fontSize: 17)),
+          Text('新增乘车人', style: context.textStyles.h2.copyWith(fontSize: 17)),
           const SizedBox(width: 40), // Balance
         ],
       ),
@@ -153,22 +154,22 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.brandBlue.withOpacity(0.1),
+        color: context.colors.brandBlue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.brandBlue.withOpacity(0.2)),
+        border: Border.all(color: context.colors.brandBlue.withOpacity(0.2)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 2),
-            child: Icon(PhosphorIconsFill.shieldCheck, color: AppColors.brandBlue, size: 24),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(PhosphorIconsFill.shieldCheck, color: context.colors.brandBlue, size: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               '您的护照与个人信息将被安全加密存储，仅用于票务预订与海关申报验证。',
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.brandBlue, height: 1.5),
+              style: context.textStyles.bodyMedium.copyWith(color: context.colors.brandBlue, height: 1.5),
             ),
           ),
         ],
@@ -182,13 +183,13 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text('身份信息', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+          child: Text('身份信息', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted)),
         ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: (!_isFirstNameValid || !_isLastNameValid) ? Colors.red.shade300 : AppColors.borderLight),
+            border: Border.all(color: (!_isFirstNameValid || !_isLastNameValid) ? Colors.red.shade300 : context.colors.borderLight),
             boxShadow: [
               if (!_isFirstNameValid || !_isLastNameValid)
                 BoxShadow(color: Colors.red.shade100, blurRadius: 4, spreadRadius: 1)
@@ -218,13 +219,13 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text('旅行证件', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+          child: Text('旅行证件', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted)),
         ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: !_isPassportValid ? Colors.red.shade300 : AppColors.borderLight),
+            border: Border.all(color: !_isPassportValid ? Colors.red.shade300 : context.colors.borderLight),
             boxShadow: [
               if (!_isPassportValid)
                 BoxShadow(color: Colors.red.shade100, blurRadius: 4, spreadRadius: 1)
@@ -252,16 +253,16 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text('座位服务', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+          child: Text('座位服务', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted)),
         ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.borderLight),
+            border: Border.all(color: context.colors.borderLight),
             boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
           ),
-          child: GestureDetector(
+          child: SpringButton(
             onTap: () async {
               final result = await Navigator.push(
                 context,
@@ -277,18 +278,18 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
                 children: [
                  SizedBox(
                     width: 85,
-                    child: Text('选择座位', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                    child: Text('选择座位', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                  ),
                  Expanded(
                     child: Text(
                       _selectedSeat,
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      style: context.textStyles.bodyMedium.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: _selectedSeat.contains('可选') ? AppColors.textMuted : AppColors.brandBlue,
+                        color: _selectedSeat.contains('可选') ? context.colors.textMuted : context.colors.brandBlue,
                       ),
                     ),
                   ),
-                  const Icon(PhosphorIconsFill.armchair, color: AppColors.brandBlue, size: 20),
+                  Icon(PhosphorIconsFill.armchair, color: context.colors.brandBlue, size: 20),
                 ],
               ),
             ),
@@ -308,7 +309,7 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
     return Container(
       decoration: BoxDecoration(
         color: isValid ? Colors.transparent : Colors.red.withOpacity(0.02),
-        border: isEnd ? null : const Border(bottom: BorderSide(color: AppColors.borderLight))
+        border: isEnd ? null : Border(bottom: BorderSide(color: context.colors.borderLight))
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
@@ -317,20 +318,20 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
             width: 85,
             child: Text(
               label, 
-              style: AppTextStyles.bodyMedium.copyWith(
+              style: context.textStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isValid ? AppColors.textMain : Colors.red.shade700,
+                color: isValid ? context.colors.textMain : Colors.red.shade700,
               )
             ),
           ),
           Expanded(
             child: TextFormField(
               controller: controller,
-              style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+              style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
               textCapitalization: TextCapitalization.characters,
               decoration: InputDecoration(
                 hintText: placeholder,
-                hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textMuted),
+                hintStyle: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -350,27 +351,27 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
     required IconData icon,
     required bool isEnd,
   }) {
-    return GestureDetector(
+    return SpringButton(
       onTap: () {},
       child: Container(
-        decoration: BoxDecoration(border: isEnd ? null : const Border(bottom: BorderSide(color: AppColors.borderLight))),
+        decoration: BoxDecoration(border: isEnd ? null : Border(bottom: BorderSide(color: context.colors.borderLight))),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: [
             SizedBox(
               width: 85,
-              child: Text(label, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+              child: Text(label, style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
             ),
             Expanded(
               child: Text(
                 value,
-                style: AppTextStyles.bodyMedium.copyWith(
+                style: context.textStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: value.contains('YYYY') ? AppColors.textMuted : AppColors.textMain,
+                  color: value.contains('YYYY') ? context.colors.textMuted : context.colors.textMain,
                 ),
               ),
             ),
-            Icon(icon, color: AppColors.textMuted, size: 18),
+            Icon(icon, color: context.colors.textMuted, size: 18),
           ],
         ),
       ),
@@ -385,20 +386,20 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter, end: Alignment.topCenter,
-            colors: [AppColors.background.withOpacity(0.95), AppColors.background.withOpacity(0.8), Colors.transparent],
+            colors: [context.colors.background.withOpacity(0.95), context.colors.background.withOpacity(0.8), Colors.transparent],
             stops: const [0.4, 0.7, 1.0],
           ),
         ),
         child: ElevatedButton(
           onPressed: _handleSubmit,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.textMain,
+            backgroundColor: context.colors.textMain,
             foregroundColor: Colors.white,
             elevation: 10,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           ),
-          child: Text('保存乘车人', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16)),
+          child: Text('保存乘车人', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16)),
         ),
       ),
     );

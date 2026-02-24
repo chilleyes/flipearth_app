@@ -53,7 +53,7 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
                   Positioned.fill(
                     child: Opacity(
                       opacity: 0.2,
-                      child: CustomPaint(painter: _DotGridPainter()),
+                      child: CustomPaint(painter: _DotGridPainter(color: context.colors.brandBlue)),
                     ),
                   ),
                   // Centered Spinner Content
@@ -79,11 +79,11 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
                                       width: 80, height: 80,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        border: const Border(
-                                          top: BorderSide(color: Colors.transparent, width: 4),
-                                          bottom: BorderSide(color: AppColors.brandBlue, width: 4),
-                                          left: BorderSide(color: AppColors.brandBlue, width: 4),
-                                          right: BorderSide(color: AppColors.brandBlue, width: 4),
+                                        border: Border(
+                                          top: const BorderSide(color: Colors.transparent, width: 4),
+                                          bottom: BorderSide(color: context.colors.brandBlue, width: 4),
+                                          left: BorderSide(color: context.colors.brandBlue, width: 4),
+                                          right: BorderSide(color: context.colors.brandBlue, width: 4),
                                         ),
                                       ),
                                     ),
@@ -95,12 +95,12 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
                           ),
                         ),
                         const SizedBox(height: 32),
-                        Text('AI 规划中...', style: AppTextStyles.h2.copyWith(color: Colors.white, fontSize: 24)),
+                        Text('AI 规划中...', style: context.textStyles.h2.copyWith(color: Colors.white, fontSize: 24)),
                         const SizedBox(height: 12),
                         Text(
                           '正在为您检索伦敦与巴黎的最佳景点，\n并匹配欧洲之星时刻表',
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary, height: 1.5),
+                          style: context.textStyles.bodyMedium.copyWith(color: context.colors.textSecondary, height: 1.5),
                         ),
                         const SizedBox(height: 48),
                         // Mock Skeletons
@@ -127,10 +127,14 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
 }
 
 class _DotGridPainter extends CustomPainter {
+  final Color color;
+
+  _DotGridPainter({required this.color});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.brandBlue
+      ..color = color
       ..style = PaintingStyle.fill;
     
     const spacing = 20.0;
@@ -146,7 +150,7 @@ class _DotGridPainter extends CustomPainter {
         final opacity = (1 - (distance / maxDist)).clamp(0.0, 1.0);
 
         if (opacity > 0) {
-          paint.color = AppColors.brandBlue.withOpacity(opacity);
+          paint.color = color.withOpacity(opacity);
           canvas.drawCircle(current, radius, paint);
         }
       }

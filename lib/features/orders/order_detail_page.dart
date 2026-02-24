@@ -4,13 +4,18 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 
-class OrderDetailPage extends StatelessWidget {
+class OrderDetailPage extends StatefulWidget {
   const OrderDetailPage({super.key});
 
   @override
+  State<OrderDetailPage> createState() => _OrderDetailPageState();
+}
+
+class _OrderDetailPageState extends State<OrderDetailPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: Stack(
         children: [
           CustomScrollView(
@@ -32,7 +37,7 @@ class OrderDetailPage extends StatelessWidget {
     return SliverAppBar(
       expandedHeight: 280,
       pinned: true,
-      backgroundColor: AppColors.textMain, // slate-900 background
+      backgroundColor: context.colors.textMain, // slate-900 background
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
@@ -41,16 +46,16 @@ class OrderDetailPage extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // Solid dark background
-            Container(color: AppColors.textMain),
+            Container(color: context.colors.textMain),
             // Bottom blue border equivalent
             Positioned(
               left: 0, right: 0, bottom: 0,
-              child: Container(height: 2, color: AppColors.brandBlue),
+              child: Container(height: 2, color: context.colors.brandBlue),
             ),
             // Dot Grid overlay
             Positioned.fill(
               child: CustomPaint(
-                painter: _DotGridPainter(),
+                painter: _DotGridPainter(color: context.colors.brandBlue.withOpacity(0.2)),
               ),
             ),
             // Content
@@ -67,8 +72,8 @@ class OrderDetailPage extends StatelessWidget {
                     children: [
                       Text(
                         'EUROSTAR STANDARD',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.brandBlue,
+                        style: context.textStyles.caption.copyWith(
+                          color: context.colors.brandBlue,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
                         ),
@@ -76,7 +81,7 @@ class OrderDetailPage extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         '伦敦到巴黎',
-                        style: AppTextStyles.h1.copyWith(
+                        style: context.textStyles.h1.copyWith(
                           color: Colors.white,
                           fontSize: 32,
                         ),
@@ -84,7 +89,7 @@ class OrderDetailPage extends StatelessWidget {
                     ],
                   ),
                   // Inverted Eurostar Text (Simplified as Icon placeholder for now)
-                  Opacity(
+                  const Opacity(
                     opacity: 0.5,
                     child: Icon(PhosphorIconsFill.train, color: Colors.white, size: 32),
                   ),
@@ -139,7 +144,7 @@ class OrderDetailPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppColors.borderLight),
+                border: Border.all(color: context.colors.borderLight),
                 boxShadow: [
                   BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 30, offset: const Offset(0, 15)),
                 ],
@@ -158,7 +163,7 @@ class OrderDetailPage extends StatelessWidget {
                         ),
                         child: Text(
                           '已确认 (CONFIRMED)',
-                          style: AppTextStyles.caption.copyWith(
+                          style: context.textStyles.caption.copyWith(
                             color: const Color(0xFF047857), // emerald-700
                             fontWeight: FontWeight.w900,
                             fontSize: 11,
@@ -167,7 +172,7 @@ class OrderDetailPage extends StatelessWidget {
                       ),
                       Text(
                         '订单号: #EST-9014-ABC',
-                        style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted),
+                        style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted),
                       ),
                     ],
                   ),
@@ -178,9 +183,9 @@ class OrderDetailPage extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          Text('09:31', style: AppTextStyles.h1.copyWith(fontSize: 32, letterSpacing: -1.0)),
+                          Text('09:31', style: context.textStyles.h1.copyWith(fontSize: 32, letterSpacing: -1.0)),
                           const SizedBox(height: 4),
-                          Text('10月1日, St Pancras', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+                          Text('10月1日, St Pancras', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted)),
                         ],
                       ),
                       Expanded(
@@ -188,7 +193,7 @@ class OrderDetailPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             children: [
-                              Text('2h 16m', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted, fontSize: 11)),
+                              Text('2h 16m', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted, fontSize: 11)),
                               const SizedBox(height: 4),
                               Stack(
                                 alignment: Alignment.center,
@@ -198,19 +203,19 @@ class OrderDetailPage extends StatelessWidget {
                                   SizedBox(
                                     width: double.infinity,
                                     child: CustomPaint(
-                                      painter: _HorizontalDashedLinePainter(),
+                                      painter: _HorizontalDashedLinePainter(color: context.colors.borderLight),
                                     ),
                                   ),
                                   // Train Icon overlaid
                                   Container(
                                     color: Colors.white,
                                     padding: const EdgeInsets.symmetric(horizontal: 4),
-                                    child: const Icon(PhosphorIconsFill.train, color: AppColors.brandBlue, size: 24),
+                                    child: Icon(PhosphorIconsFill.train, color: context.colors.brandBlue, size: 24),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 4),
-                              Text('直达', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted, fontSize: 11)),
+                              Text('直达', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted, fontSize: 11)),
                             ],
                           ),
                         ),
@@ -218,9 +223,9 @@ class OrderDetailPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text('12:47', style: AppTextStyles.h1.copyWith(fontSize: 32, letterSpacing: -1.0)),
+                          Text('12:47', style: context.textStyles.h1.copyWith(fontSize: 32, letterSpacing: -1.0)),
                           const SizedBox(height: 4),
-                          Text('10月1日, Gare du Nord', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+                          Text('10月1日, Gare du Nord', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted)),
                         ],
                       ),
                     ],
@@ -233,16 +238,16 @@ class OrderDetailPage extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.background,
+                            color: context.colors.background,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: AppColors.borderLight),
+                            border: Border.all(color: context.colors.borderLight),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('COACH (车厢)', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 1.0)),
+                              Text('COACH (车厢)', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted, letterSpacing: 1.0)),
                               const SizedBox(height: 4),
-                              Text('09', style: AppTextStyles.h1.copyWith(fontSize: 24)),
+                              Text('09', style: context.textStyles.h1.copyWith(fontSize: 24)),
                             ],
                           ),
                         ),
@@ -252,22 +257,22 @@ class OrderDetailPage extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.background,
+                            color: context.colors.background,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: AppColors.borderLight),
+                            border: Border.all(color: context.colors.borderLight),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('SEAT (座位)', style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 1.0)),
+                              Text('SEAT (座位)', style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted, letterSpacing: 1.0)),
                               const SizedBox(height: 4),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.baseline,
                                 textBaseline: TextBaseline.alphabetic,
                                 children: [
-                                  Text('45', style: AppTextStyles.h1.copyWith(fontSize: 24)),
+                                  Text('45', style: context.textStyles.h1.copyWith(fontSize: 24)),
                                   const SizedBox(width: 4),
-                                  Text('Window', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+                                  Text('Window', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMuted)),
                                 ],
                               ),
                             ],
@@ -281,9 +286,9 @@ class OrderDetailPage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.brandBlue.withOpacity(0.05),
+                      color: context.colors.brandBlue.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.brandBlue.withOpacity(0.2)),
+                      border: Border.all(color: context.colors.brandBlue.withOpacity(0.2)),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,19 +296,19 @@ class OrderDetailPage extends StatelessWidget {
                         Container(
                           width: 40,
                           height: 40,
-                          decoration: BoxDecoration(color: AppColors.brandBlue.withOpacity(0.1), shape: BoxShape.circle),
-                          child: const Icon(PhosphorIconsFill.info, color: AppColors.brandBlue),
+                          decoration: BoxDecoration(color: context.colors.brandBlue.withOpacity(0.1), shape: BoxShape.circle),
+                          child: Icon(PhosphorIconsFill.info, color: context.colors.brandBlue),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('乘车提示', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                              Text('乘车提示', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                               const SizedBox(height: 2),
                               Text(
                                 '请提前至少 60 分钟抵达车站，以便完成安检和海关过境手续。列车在出发前 15 分钟停止检票。',
-                                style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary, height: 1.5),
+                                style: context.textStyles.caption.copyWith(color: context.colors.textSecondary, height: 1.5),
                               ),
                             ],
                           ),
@@ -318,7 +323,7 @@ class OrderDetailPage extends StatelessWidget {
             const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.only(left: 8, bottom: 8),
-              child: Text('乘客信息', style: AppTextStyles.h3.copyWith(fontSize: 18)),
+              child: Text('乘客信息', style: context.textStyles.h3.copyWith(fontSize: 18)),
             ),
             // Passenger & Price Box
             Container(
@@ -326,7 +331,7 @@ class OrderDetailPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppColors.borderLight),
+                border: Border.all(color: context.colors.borderLight),
                 boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
               ),
               child: Column(
@@ -337,35 +342,35 @@ class OrderDetailPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('ZHAO / HANG', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text('ZHAO / HANG', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, fontSize: 16)),
                           const SizedBox(height: 2),
-                          Text('成人 (Adult) · 护照 E1234****', style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.w500)),
+                          Text('成人 (Adult) · 护照 E1234****', style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.w500)),
                         ],
                       ),
                       Container(
                         width: 40,
                         height: 40,
-                        decoration: const BoxDecoration(color: AppColors.background, shape: BoxShape.circle),
-                        child: const Icon(PhosphorIconsBold.pencilSimple, color: AppColors.textMuted, size: 18),
+                        decoration: BoxDecoration(color: context.colors.background, shape: BoxShape.circle),
+                        child: Icon(PhosphorIconsBold.pencilSimple, color: context.colors.textMuted, size: 18),
                       ),
                     ],
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Divider(color: AppColors.background, thickness: 1, height: 1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Divider(color: context.colors.background, thickness: 1, height: 1),
                   ),
                   _buildPriceRow('票价 (Base Fare)', '€ 145.00'),
                   const SizedBox(height: 8),
                   _buildPriceRow('税费 (Taxes & Fees)', '€ 12.50'),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Divider(color: AppColors.borderLight, thickness: 1, height: 1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Divider(color: context.colors.borderLight, thickness: 1, height: 1),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('总计 (Total)', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w900, fontSize: 15)),
-                      Text('€ 157.50', style: AppTextStyles.h2.copyWith(color: AppColors.brandBlue, fontSize: 18)),
+                      Text('总计 (Total)', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.w900, fontSize: 15)),
+                      Text('€ 157.50', style: context.textStyles.h2.copyWith(color: context.colors.brandBlue, fontSize: 18)),
                     ],
                   ),
                 ],
@@ -381,8 +386,8 @@ class OrderDetailPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: AppTextStyles.caption.copyWith(color: AppColors.textMuted, fontWeight: FontWeight.w500, fontSize: 13)),
-        Text(value, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+        Text(label, style: context.textStyles.caption.copyWith(color: context.colors.textMuted, fontWeight: FontWeight.w500, fontSize: 13)),
+        Text(value, style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -393,8 +398,8 @@ class OrderDetailPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.only(top: 16, bottom: 32, left: 24, right: 24),
         decoration: BoxDecoration(
-          color: AppColors.background.withOpacity(0.9),
-          border: const Border(top: BorderSide(color: AppColors.borderLight)),
+          color: context.colors.background.withOpacity(0.9),
+          border: Border(top: BorderSide(color: context.colors.borderLight)),
         ),
         child: Row(
           children: [
@@ -403,9 +408,9 @@ class OrderDetailPage extends StatelessWidget {
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: AppColors.textSecondary,
+                  foregroundColor: context.colors.textSecondary,
                   elevation: 0,
-                  side: const BorderSide(color: AppColors.borderLight),
+                  side: BorderSide(color: context.colors.borderLight),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
@@ -414,7 +419,7 @@ class OrderDetailPage extends StatelessWidget {
                   children: [
                     const Icon(PhosphorIconsBold.arrowUDownLeft, size: 18),
                     const SizedBox(width: 6),
-                    Text('退改签政策', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                    Text('退改签政策', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -424,7 +429,7 @@ class OrderDetailPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.textMain,
+                  backgroundColor: context.colors.textMain,
                   foregroundColor: Colors.white,
                   elevation: 5,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -435,7 +440,7 @@ class OrderDetailPage extends StatelessWidget {
                   children: [
                     const Icon(PhosphorIconsBold.headset, size: 18),
                     const SizedBox(width: 6),
-                    Text('联系客服', style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: Colors.white)),
+                    Text('联系客服', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: Colors.white)),
                   ],
                 ),
               ),
@@ -449,10 +454,14 @@ class OrderDetailPage extends StatelessWidget {
 
 // Custom Painter for the background dot grid
 class _DotGridPainter extends CustomPainter {
+  final Color color;
+
+  _DotGridPainter({required this.color});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.brandBlue.withOpacity(0.2)
+      ..color = color
       ..style = PaintingStyle.fill;
 
     const spacing = 20.0;
@@ -471,10 +480,14 @@ class _DotGridPainter extends CustomPainter {
 
 // Custom Painter for horizontal dashed line
 class _HorizontalDashedLinePainter extends CustomPainter {
+  final Color color;
+
+  _HorizontalDashedLinePainter({required this.color});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.borderLight
+      ..color = color
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 

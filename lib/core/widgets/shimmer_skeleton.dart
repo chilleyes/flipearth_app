@@ -44,7 +44,7 @@ class TripSkeletonCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.borderLight),
+        border: Border.all(color: context.colors.borderLight),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -54,10 +54,10 @@ class TripSkeletonCard extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(
+      child: const Column(
         children: [
           // Image skeleton
-          const ShimmerSkeleton(
+          ShimmerSkeleton(
             width: double.infinity,
             height: 180,
             borderRadius: 0,
@@ -65,24 +65,24 @@ class TripSkeletonCard extends StatelessWidget {
           
           // Content skeleton
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Title
-                const ShimmerSkeleton(width: 200, height: 24),
-                const SizedBox(height: 8),
+                ShimmerSkeleton(width: 200, height: 24),
+                SizedBox(height: 8),
                 // Subtitle
-                const ShimmerSkeleton(width: 140, height: 16),
-                const SizedBox(height: 24),
+                ShimmerSkeleton(width: 140, height: 16),
+                SizedBox(height: 24),
                 // Buttons
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: 12),
                     ),
-                    const SizedBox(width: 8),
-                    const Expanded(
+                    SizedBox(width: 8),
+                    Expanded(
                       child: ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: 12),
                     ),
                   ],

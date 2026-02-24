@@ -5,13 +5,18 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../orders/order_list_page.dart';
 import '../chat/chat_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: CustomScrollView(
         slivers: [
           _buildAppBar(),
@@ -52,14 +57,14 @@ class ProfilePage extends StatelessWidget {
                   Container(
                     width: 80,
                     height: 80,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
-                        colors: [AppColors.brandBlue, Color(0xFF38BDF8)], // sky-400
+                        colors: [context.colors.brandBlue, const Color(0xFF38BDF8)], // sky-400
                       ),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Color(0x19000000), // shadow-sm
                           blurRadius: 2,
@@ -89,19 +94,19 @@ class ProfilePage extends StatelessWidget {
                     children: [
                       Text(
                         'Hang Zhao',
-                        style: AppTextStyles.h1.copyWith(fontSize: 24),
+                        style: context.textStyles.h1.copyWith(fontSize: 24),
                       ),
                       const SizedBox(height: 4),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppColors.brandBlue.withOpacity(0.1),
+                          color: context.colors.brandBlue.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           'PRO 会员',
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.brandBlue,
+                          style: context.textStyles.caption.copyWith(
+                            color: context.colors.brandBlue,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
@@ -117,7 +122,7 @@ class ProfilePage extends StatelessWidget {
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
         child: Container(
-          color: AppColors.borderLight,
+          color: context.colors.borderLight,
           height: 1,
         ),
       ),
@@ -129,7 +134,7 @@ class ProfilePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.borderLight),
+        border: Border.all(color: context.colors.borderLight),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -144,7 +149,7 @@ class ProfilePage extends StatelessWidget {
             title: '我的客服',
             subtitle: '在线支持与反馈',
             icon: PhosphorIconsFill.headset,
-            iconColor: AppColors.brandBlue,
+            iconColor: context.colors.brandBlue,
             iconBgColor: const Color(0xFFEFF6FF),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatPage()));
@@ -155,7 +160,7 @@ class ProfilePage extends StatelessWidget {
             title: '订单中心',
             subtitle: '历史行程与车票',
             icon: PhosphorIconsFill.ticket,
-            iconColor: AppColors.brandBlue,
+            iconColor: context.colors.brandBlue,
             iconBgColor: const Color(0xFFEFF6FF), // blue-50
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderListPage()));
@@ -211,25 +216,25 @@ class ProfilePage extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+        style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 2),
         child: Text(
           subtitle,
-          style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
+          style: context.textStyles.caption.copyWith(color: context.colors.textMuted),
         ),
       ),
-      trailing: const Icon(PhosphorIconsBold.caretRight, color: AppColors.borderLight, size: 16),
+      trailing: Icon(PhosphorIconsBold.caretRight, color: context.colors.borderLight, size: 16),
       onTap: onTap,
     );
   }
 
   Widget _buildDivider() {
-    return const Divider(
+    return Divider(
       height: 1,
       thickness: 1,
-      color: AppColors.background,
+      color: context.colors.background,
       indent: 76,
     );
   }
@@ -244,7 +249,7 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: AppColors.borderLight),
+            side: BorderSide(color: context.colors.borderLight),
           ),
         ),
         child: const Text(
