@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
-import 'order_detail_page.dart';
+import '../tickets/my_tickets_page.dart';
 
 class OrderListPage extends StatefulWidget {
   const OrderListPage({super.key});
@@ -140,7 +140,7 @@ class _OrderListPageState extends State<OrderListPage> with SingleTickerProvider
   Widget _buildActiveTrainTicketCard() {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderDetailPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const MyTicketsPage()));
       },
       child: Container(
         decoration: BoxDecoration(
