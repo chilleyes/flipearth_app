@@ -121,12 +121,12 @@ class ExplorePage extends StatelessWidget {
             ),
             
             // Train emoji
-            const Positioned(
+            Positioned(
               bottom: -10,
               right: -10,
               child: Transform(
                 transform: Matrix4.rotationZ(-0.26), // -15 degrees in radians
-                child: Opacity(
+                child: const Opacity(
                   opacity: 0.1,
                   child: Text(
                     '🚂',

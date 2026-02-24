@@ -5,6 +5,7 @@ import '../planner/planner_page.dart';
 import '../explore/explore_page.dart';
 import '../trips/my_trips_page.dart';
 import '../tickets/my_tickets_page.dart';
+import '../profile/profile_page.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -22,7 +23,7 @@ class _MainLayoutState extends State<MainLayout> {
     const PlannerPage(), // <-- The new Hero Planner Page
     const MyTripsPage(), // <-- My Trips Page hooked up
     const MyTicketsPage(), // <-- My Tickets Page hooked up
-    const _DummyPage(title: '个人中心 (Profile)'),
+    const ProfilePage(),  // <-- Profile Page hooked up
   ];
 
   void _onTabTapped(int index) {
