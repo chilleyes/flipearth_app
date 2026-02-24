@@ -4,9 +4,28 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../itinerary/itinerary_detail_page.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../../core/widgets/shimmer_skeleton.dart';
+import '../../core/widgets/empty_state_widget.dart';
 
-class MyTripsPage extends StatelessWidget {
+class MyTripsPage extends StatefulWidget {
   const MyTripsPage({super.key});
+
+  @override
+  State<MyTripsPage> createState() => _MyTripsPageState();
+}
+
+class _MyTripsPageState extends State<MyTripsPage> {
+  bool _isLoading = true;
+  bool _hasTrips = false; // Toggle this to test
+
+  @override
+  void initState() {
+    super.initState();
+    // Simulate network delay
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _isLoading = false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +40,18 @@ class MyTripsPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildTripCard(context),
+                  if (_isLoading) ...[
+                    const TripSkeletonCard(),
+                    const TripSkeletonCard(),
+                  ] else if (!_hasTrips) ...[
+                    const EmptyStateWidget(
+                      title: '暂无行程',
+                      subtitle: '世界那么大，是不是该去看看了？',
+                      icon: PhosphorIconsRegular.paperPlaneRight,
+                    ),
+                  ] else ...[
+                    _buildTripCard(context),
+                  ],
                   // Additional space if there were more cards
                 ],
               ),
@@ -144,6 +174,8 @@ class MyTripsPage extends StatelessWidget {
                   Text(
                     '伦敦 & 巴黎 双城之旅',
                     style: AppTextStyles.h2.copyWith(fontSize: 19),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -152,6 +184,8 @@ class MyTripsPage extends StatelessWidget {
                       color: AppColors.textMuted,
                       fontWeight: FontWeight.w500,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 16),
                   // Action Buttons
@@ -284,7 +318,17 @@ class MyTripsPage extends StatelessWidget {
                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                  children: [
                    Text('伦敦', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
-                   Text('预计 45 分钟后抵达', style: AppTextStyles.caption.copyWith(color: AppColors.brandBlue, fontWeight: FontWeight.bold)),
+                   const SizedBox(width: 8),
+                   Expanded(
+                     child: Text(
+                       '预计 45 分钟后抵达', 
+                       style: AppTextStyles.caption.copyWith(color: AppColors.brandBlue, fontWeight: FontWeight.bold),
+                       textAlign: TextAlign.center,
+                       maxLines: 1,
+                       overflow: TextOverflow.ellipsis,
+                     ),
+                   ),
+                   const SizedBox(width: 8),
                    Text('巴黎', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
                  ],
                ),

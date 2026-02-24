@@ -48,26 +48,4 @@ class _MainLayoutState extends State<MainLayout> {
   }
 }
 
-class _DummyPage extends StatelessWidget {
-  final String title;
 
-  const _DummyPage({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.background,
-      child: Center(
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textMain,
-          ),
-        ),
-      ),
-    );
-  }
-}

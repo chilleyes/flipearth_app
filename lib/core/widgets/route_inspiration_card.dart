@@ -100,6 +100,8 @@ class RouteInspirationCard extends StatelessWidget {
                             style: AppTextStyles.caption.copyWith(
                               color: Colors.white.withOpacity(0.9),
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),

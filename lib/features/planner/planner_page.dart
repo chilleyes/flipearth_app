@@ -38,6 +38,19 @@ class _PlannerPageState extends State<PlannerPage> {
     });
   }
 
+  bool get _isFormValid {
+    // Cannot be same station
+    if (_fromStation == _toStation) return false;
+    // Must have outward date
+    if (_outboundDate == null) return false;
+    // Return date cannot be before outward date
+    if (_returnDate != null && _returnDate!.isBefore(_outboundDate!)) return false;
+    // Must have at least 1 passenger
+    if ((_adults + _youths + _children) == 0) return false;
+    
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -286,15 +299,21 @@ class _PlannerPageState extends State<PlannerPage> {
             child: Stack(
               alignment: Alignment.centerRight,
               children: [
-                Column(
-                  children: [
-                    _buildStationField('出发地', _fromStation, PhosphorIconsFill.mapPin, true),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 36),
-                      child: Divider(height: 24, color: AppColors.borderLight),
-                    ),
-                    _buildStationField('目的地', _toStation, PhosphorIconsFill.mapPinLine, false),
-                  ],
+                Container(
+                  decoration: BoxDecoration(
+                    color: _fromStation == _toStation ? Colors.red.withOpacity(0.05) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildStationField('出发地', _fromStation, PhosphorIconsFill.mapPin, true),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 36),
+                        child: Divider(height: 24, color: AppColors.borderLight),
+                      ),
+                      _buildStationField('目的地', _toStation, PhosphorIconsFill.mapPinLine, false),
+                    ],
+                  ),
                 ),
                 Positioned(
                   right: 16,
@@ -360,18 +379,35 @@ class _PlannerPageState extends State<PlannerPage> {
           // Search CTA
           Padding(
             padding: const EdgeInsets.all(20),
-            child: SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.brandBlue,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 0,
+            child: Column(
+              children: [
+                if (_fromStation == _toStation)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(PhosphorIconsFill.warningCircle, color: Colors.orange, size: 16),
+                        const SizedBox(width: 8),
+                         Text('出发地和目的地不能相同', style: AppTextStyles.caption.copyWith(color: Colors.orange)),
+                      ],
+                    ),
+                  ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isFormValid ? () {} : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _isFormValid ? AppColors.brandBlue : AppColors.borderLight,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 0,
+                    ),
+                    child: Text('查找车票', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: _isFormValid ? Colors.white : AppColors.textMuted)),
+                  ),
                 ),
-                child: const Text('查找车票', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-              ),
+              ],
             ),
           ),
         ],
@@ -476,10 +512,16 @@ class _PlannerPageState extends State<PlannerPage> {
         if (isOutbound) {
           _outboundDate = picked;
           if (_returnDate != null && _returnDate!.isBefore(picked)) {
-            _returnDate = null;
+            _returnDate = null; // Auto-clear return date if invalid
           }
         } else {
-          _returnDate = picked;
+          // Double check to prevent inversion during selection
+          if (_outboundDate != null && picked.isBefore(_outboundDate!)) {
+            // Revert or show toast (for now just clamp it to outbound date)
+            _returnDate = _outboundDate;
+          } else {
+            _returnDate = picked;
+          }
         }
       });
     }

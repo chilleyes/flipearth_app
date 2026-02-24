@@ -17,6 +17,67 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
   final _lastNameController = TextEditingController();
   final _passportController = TextEditingController();
   String _selectedSeat = '选座偏好 (可选)';
+  
+  // Validation State
+  bool _isFirstNameValid = true;
+  bool _isLastNameValid = true;
+  bool _isPassportValid = true;
+  bool _isAttemptedSubmit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _firstNameController.addListener(_validateForm);
+    _lastNameController.addListener(_validateForm);
+    _passportController.addListener(_validateForm);
+  }
+
+  void _validateForm() {
+    if (!_isAttemptedSubmit) return;
+
+    final first = _firstNameController.text.trim();
+    final last = _lastNameController.text.trim();
+    final pp = _passportController.text.trim();
+
+    // Standard western/pinyin name (letters only, min 1 char)
+    final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
+    // Typical passport structure (letters and numbers, min 6 chars)
+    final ppRegex = RegExp(r'^[A-Z0-9]{6,15}$');
+
+    setState(() {
+      _isFirstNameValid = first.isNotEmpty && nameRegex.hasMatch(first);
+      _isLastNameValid = last.isNotEmpty && nameRegex.hasMatch(last);
+      _isPassportValid = pp.isNotEmpty && ppRegex.hasMatch(pp);
+    });
+  }
+
+  bool _isFormValid() {
+    return _isFirstNameValid && _isLastNameValid && _isPassportValid &&
+           _firstNameController.text.isNotEmpty &&
+           _lastNameController.text.isNotEmpty &&
+           _passportController.text.isNotEmpty;
+  }
+
+  void _handleSubmit() {
+    setState(() => _isAttemptedSubmit = true);
+    _validateForm();
+    
+    if (_isFormValid()) {
+      // Dismiss keyboard
+      FocusScope.of(context).unfocus();
+      
+      // Pop the specific AddTravelerPage from navigation stack
+      Navigator.pop(context);
+      
+      // Show the Checkout Sheet on top of the underlying Booking flow
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => const CheckoutSheet(),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -127,13 +188,22 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.borderLight),
-            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+            border: Border.all(color: (!_isFirstNameValid || !_isLastNameValid) ? Colors.red.shade300 : AppColors.borderLight),
+            boxShadow: [
+              if (!_isFirstNameValid || !_isLastNameValid)
+                BoxShadow(color: Colors.red.shade100, blurRadius: 4, spreadRadius: 1)
+              else
+                const BoxShadow(color: Colors.black12, blurRadius: 4),
+            ],
           ),
           child: Column(
             children: [
-              _buildInputRow(label: '名 (First)', placeholder: '如 HANG', controller: _firstNameController, isEnd: false),
-              _buildInputRow(label: '姓 (Last)', placeholder: '如 ZHAO', controller: _lastNameController, isEnd: false),
+              _buildInputRow(
+                label: '名 (First)', placeholder: '如 HANG', controller: _firstNameController, isEnd: false, isValid: _isFirstNameValid
+              ),
+              _buildInputRow(
+                label: '姓 (Last)', placeholder: '如 ZHAO', controller: _lastNameController, isEnd: false, isValid: _isLastNameValid
+              ),
               _buildSelectorRow(label: '出生日期', value: 'YYYY-MM-DD', icon: PhosphorIconsBold.calendarBlank, isEnd: true),
             ],
           ),
@@ -154,13 +224,20 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.borderLight),
-            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
+            border: Border.all(color: !_isPassportValid ? Colors.red.shade300 : AppColors.borderLight),
+            boxShadow: [
+              if (!_isPassportValid)
+                BoxShadow(color: Colors.red.shade100, blurRadius: 4, spreadRadius: 1)
+              else
+                const BoxShadow(color: Colors.black12, blurRadius: 4),
+            ],
           ),
           child: Column(
             children: [
               _buildSelectorRow(label: '发行国家', value: '中国 (CHINA)', icon: PhosphorIconsBold.caretRight, isEnd: false),
-              _buildInputRow(label: '护照号', placeholder: '输入护照号码', controller: _passportController, isEnd: false),
+              _buildInputRow(
+                label: '护照号', placeholder: '输入护照号码', controller: _passportController, isEnd: false, isValid: _isPassportValid
+              ),
               _buildSelectorRow(label: '有效期至', value: 'YYYY-MM-DD', icon: PhosphorIconsBold.calendarBlank, isEnd: true),
             ],
           ),
@@ -226,15 +303,25 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
     required String placeholder,
     required TextEditingController controller,
     required bool isEnd,
+    required bool isValid,
   }) {
     return Container(
-      decoration: BoxDecoration(border: isEnd ? null : const Border(bottom: BorderSide(color: AppColors.borderLight))),
+      decoration: BoxDecoration(
+        color: isValid ? Colors.transparent : Colors.red.withOpacity(0.02),
+        border: isEnd ? null : const Border(bottom: BorderSide(color: AppColors.borderLight))
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
         children: [
           SizedBox(
             width: 85,
-            child: Text(label, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+            child: Text(
+              label, 
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isValid ? AppColors.textMain : Colors.red.shade700,
+              )
+            ),
           ),
           Expanded(
             child: TextFormField(
@@ -250,6 +337,8 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
               ),
             ),
           ),
+          if (!isValid)
+            const Icon(PhosphorIconsFill.warningCircle, color: Colors.red, size: 20),
         ],
       ),
     );
@@ -301,21 +390,7 @@ class _AddTravelerPageState extends State<AddTravelerPage> {
           ),
         ),
         child: ElevatedButton(
-          onPressed: () {
-            // Dismiss keyboard
-            FocusScope.of(context).unfocus();
-            
-            // Pop the specific AddTravelerPage from navigation stack
-            Navigator.pop(context);
-            
-            // Show the Checkout Sheet on top of the underlying Booking flow
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (_) => const CheckoutSheet(),
-            );
-          },
+          onPressed: _handleSubmit,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.textMain,
             foregroundColor: Colors.white,

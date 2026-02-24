@@ -3,9 +3,27 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../../core/widgets/shimmer_skeleton.dart';
+import '../../core/widgets/empty_state_widget.dart';
 
-class MyTicketsPage extends StatelessWidget {
+class MyTicketsPage extends StatefulWidget {
   const MyTicketsPage({super.key});
+
+  @override
+  State<MyTicketsPage> createState() => _MyTicketsPageState();
+}
+
+class _MyTicketsPageState extends State<MyTicketsPage> {
+  bool _isLoading = true;
+  bool _hasTickets = false; // Toggle this to test
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _isLoading = false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +37,17 @@ class MyTicketsPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Column(
                 children: [
-                  _buildTicketCard(),
+                  if (_isLoading) ...[
+                    const TicketSkeletonCard(),
+                  ] else if (!_hasTickets) ...[
+                    const EmptyStateWidget(
+                      title: '暂无行程车票',
+                      subtitle: '您的下一段旅程，由 FlipEarth 开启。',
+                      icon: PhosphorIconsRegular.ticket,
+                    ),
+                  ] else ...[
+                    _buildTicketCard(),
+                  ],
                 ],
               ),
             ),
@@ -148,6 +176,8 @@ class MyTicketsPage extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.textSecondary,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -221,6 +251,8 @@ class MyTicketsPage extends StatelessWidget {
                                   color: AppColors.textSecondary,
                                 ),
                                 textAlign: TextAlign.right,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
