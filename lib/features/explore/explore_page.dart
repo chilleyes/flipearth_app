@@ -5,6 +5,7 @@ import '../../core/theme/app_text_styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../planner/planner_page.dart';
 import 'destination_guide_page.dart';
+import 'widgets/time_aware_parallax_header.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
@@ -43,48 +44,13 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   Widget _buildAppBar() {
-    return SliverAppBar(
+    return SliverPersistentHeader(
       pinned: true,
-      backgroundColor: Colors.white.withOpacity(0.8),
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      flexibleSpace: ClipRRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(color: Colors.transparent),
-        ),
+      delegate: TimeAwareParallaxHeaderDelegate(
+        expandedHeight: 280,
+        collapsedHeight: MediaQuery.of(context).padding.top + 60,
+        context: context,
       ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1),
-        child: Container(
-          color: context.colors.borderLight,
-          height: 1,
-        ),
-      ),
-      title: Text(
-        '探索灵感',
-        style: context.textStyles.h1.copyWith(fontSize: 28),
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: GestureDetector(
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: context.colors.borderLight,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                PhosphorIconsRegular.bell,
-                color: context.colors.textSecondary,
-                size: 20,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -240,11 +206,11 @@ class _ExplorePageState extends State<ExplorePage> {
             title: '冰川列车全景',
             subtitle: '8天7晚 · 绝美阿尔卑斯',
             country: '🇨🇭 瑞士',
-            imageUrl: 'https://images.unsplash.com/photo-1515586618600-b6f9f654b9d5?auto=format&fit=crop&q=80&w=400',
+            imageUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=400',
           ))),
           child: _buildGridItem(
             heroTag: 'dest_ch',
-            imageUrl: 'https://images.unsplash.com/photo-1515586618600-b6f9f654b9d5?auto=format&fit=crop&q=80&w=400',
+            imageUrl: 'https://images.unsplash.com/photo-1522083111301-4c172352163b?auto=format&fit=crop&q=80&w=400',
             country: '🇨🇭 瑞士',
             title: '冰川列车全景',
             subtitle: '8天7晚 · 绝美阿尔卑斯',

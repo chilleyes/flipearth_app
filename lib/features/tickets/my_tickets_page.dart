@@ -1,5 +1,7 @@
 import 'dart:ui';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -15,14 +17,23 @@ class MyTicketsPage extends StatefulWidget {
 
 class _MyTicketsPageState extends State<MyTicketsPage> {
   bool _isLoading = true;
-  final bool _hasTickets = false; // Toggle this to test
+  final bool _hasTickets = true; // Set to true to test
+  late ConfettiController _confettiController;
+  bool _isStamped = false;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) setState(() => _isLoading = false);
     });
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   @override
@@ -55,6 +66,21 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
           const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
+      floatingActionButton: _buildConfettiOverlay(), // Floating at top for visual effect
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
+    );
+  }
+
+  Widget _buildConfettiOverlay() {
+    return ConfettiWidget(
+      confettiController: _confettiController,
+      blastDirection: pi / 2, // straight down
+      maxBlastForce: 40,
+      minBlastForce: 10,
+      emissionFrequency: 0.1,
+      numberOfParticles: 30,
+      gravity: 0.2,
+      colors: const [Colors.green, Colors.blue, Colors.pink, Colors.orange, Colors.purple],
     );
   }
 
@@ -294,7 +320,52 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                         height: 110,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    if (_isStamped)
+                      TweenAnimationBuilder<double>(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.elasticOut,
+                        tween: Tween(begin: 2.0, end: 1.0),
+                        builder: (context, value, child) {
+                          return Transform.scale(
+                            scale: value,
+                            child: Transform.rotate(
+                              angle: -0.2,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                margin: const EdgeInsets.only(bottom: 24),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.red.shade700, width: 3),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'BOARDED / 已出行',
+                                  style: TextStyle(
+                                    color: Colors.red.shade700,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 24),
+                        child: TextButton.icon(
+                          onPressed: () {
+                            setState(() => _isStamped = true);
+                            _confettiController.play();
+                          },
+                          icon: const Icon(PhosphorIconsFill.stamp),
+                          label: const Text('模拟检票打卡', style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: TextButton.styleFrom(
+                            foregroundColor: context.colors.brandBlue,
+                          ),
+                        ),
+                      ),
                     SizedBox(
                       width: double.infinity,
                       height: 54,

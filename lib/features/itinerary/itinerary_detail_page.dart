@@ -20,6 +20,7 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
   late PageController _mapPageController;
   Animation<Matrix4>? _mapPanAnimation;
   int _currentMapIndex = 0;
+  Color? _dominantColor;
 
   final List<Offset> _mapPoints = const [
     Offset(300, 300), // London
@@ -36,6 +37,8 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
     _pulseController = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
     _mapPageController = PageController(viewportFraction: 0.85);
 
+    _extractColor();
+
     _mapPanController.addListener(() {
       if (_mapPanAnimation != null) {
         _mapTransformationController.value = _mapPanAnimation!.value;
@@ -45,6 +48,20 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animateMapTo(_mapPoints[0], scale: 1.5);
     });
+  }
+
+  Future<void> _extractColor() async {
+    try {
+      const imageProvider = NetworkImage('https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&q=80&w=1000');
+      final colorScheme = await ColorScheme.fromImageProvider(provider: imageProvider);
+      if (mounted) {
+        setState(() {
+          _dominantColor = colorScheme.primary;
+        });
+      }
+    } catch (e) {
+      // Ignore
+    }
   }
 
   void _animateMapTo(Offset mapCenter, {double scale = 1.3}) {
@@ -127,8 +144,8 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.6),
-                    Colors.black.withOpacity(0.2),
+                    _dominantColor?.withOpacity(0.6) ?? Colors.black.withOpacity(0.6),
+                    _dominantColor?.withOpacity(0.2) ?? Colors.black.withOpacity(0.2),
                     context.colors.background,
                   ],
                 ),
@@ -900,6 +917,7 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
   }
 
   Widget _buildFabMenu() {
+    final fabBgColor = _dominantColor ?? context.colors.textMain;
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
@@ -907,7 +925,7 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           FloatingActionButton(
-            backgroundColor: context.colors.textMain, // slate-900
+            backgroundColor: fabBgColor,
             elevation: 10,
             onPressed: () {},
             child: const Icon(PhosphorIconsFill.magicWand, color: Colors.white, size: 28),
