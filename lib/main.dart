@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'core/theme/app_colors.dart';
 import 'features/welcome/welcome_page.dart';
 import 'features/layout/main_layout.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -22,6 +24,16 @@ class FlipEarthApp extends StatelessWidget {
     return MaterialApp(
       title: 'FlipEarth',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('zh', ''), // Chinese
+        Locale('en', ''), // English
+      ],
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: AppColorsExtension.light.background,

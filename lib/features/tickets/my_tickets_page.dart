@@ -5,6 +5,7 @@ import 'package:confetti/confetti.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/widgets/shimmer_skeleton.dart';
 import '../../core/widgets/empty_state_widget.dart';
 
@@ -153,8 +154,8 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Eurostar fake logo
-                        Image.network(
-                          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Eurostar_logo_2023.svg/512px-Eurostar_logo_2023.svg.png',
+                        CachedNetworkImage(
+                          imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Eurostar_logo_2023.svg/512px-Eurostar_logo_2023.svg.png',
                           height: 20,
                           color: context.colors.textMain, // mix-blend-multiply alternative
                         ),
@@ -314,8 +315,8 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                         border: Border.all(color: context.colors.borderLight),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Image.network(
-                        'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FLIPEARTH-EST9014',
+                      child: CachedNetworkImage(
+                        imageUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FLIPEARTH-EST9014',
                         width: 110,
                         height: 110,
                       ),

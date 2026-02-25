@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../planner/planner_page.dart';
 import 'destination_guide_page.dart';
 import 'widgets/time_aware_parallax_header.dart';
@@ -288,8 +289,8 @@ class _ExplorePageState extends State<ExplorePage> {
                 children: [
                   Hero(
                     tag: heroTag,
-                    child: Image.network(
-                      imageUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
                       fit: BoxFit.cover,
                     ),
                   ),

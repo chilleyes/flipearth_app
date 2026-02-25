@@ -1,0 +1,20 @@
+{
+  "@@locale": "zh",
+  "appTitle": "FlipEarth",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "exploreTitle": "探索灵感",
+  "exploreSubtitle": "让 AI 帮你制定专属个性化路线",
+  "plannerAiRoute": "AI 路线规划",
+  "plannerDirectTicket": "单独买火车票",
+  "fromStation": "出发地",
+  "toStation": "目的地",
+  "departureDate": "出发日期",
+  "returnDate": "返程日期",
+  "passengers": "乘客与优待卡",
+  "searchTickets": "查找车票",
+  "myTrips": "我的行程",
+  "myTickets": "我的车票",
+  "profile": "我的"
+}

@@ -6,8 +6,10 @@ import '../../core/widgets/glow_tag.dart';
 import '../../core/widgets/route_inspiration_card.dart';
 import '../../core/widgets/glow_fab.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../search/station_picker_page.dart';
 import '../search/widgets/passenger_selector_sheet.dart';
+import '../search/widgets/calendar_bottom_sheet.dart';
 
 class PlannerPage extends StatefulWidget {
   const PlannerPage({super.key});
@@ -376,6 +378,32 @@ class _PlannerPageState extends State<PlannerPage> {
               _pickPassengers,
             ),
           ),
+          Divider(height: 1, color: context.colors.borderLight),
+          // Recent Searches section
+          Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('最近搜索', style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
+                    Icon(PhosphorIconsRegular.clockCounterClockwise, size: 14, color: context.colors.textMuted),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildRecentSearchToken('伦敦', '巴黎', '10月1日'),
+                    _buildRecentSearchToken('布鲁塞尔', '阿姆斯特丹', '12月15日'),
+                  ],
+                ),
+              ],
+            ),
+          ),
           // Search CTA
           Padding(
             padding: const EdgeInsets.all(20),
@@ -490,21 +518,16 @@ class _PlannerPageState extends State<PlannerPage> {
         ? (_outboundDate ?? DateTime.now()) 
         : (_returnDate ?? _outboundDate ?? DateTime.now());
     
-    final picked = await showDatePicker(
+    final picked = await showModalBottomSheet<DateTime>(
       context: context,
-      initialDate: initialDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: context.colors.brandBlue,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent, // Background provided by the widget
+      builder: (_) => CalendarBottomSheet(
+        initialDate: initialDate,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(const Duration(days: 365)),
+        isOutbound: isOutbound,
+      ),
     );
 
     if (picked != null) {
@@ -578,8 +601,8 @@ class _PlannerPageState extends State<PlannerPage> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&q=80&w=1000',
+            CachedNetworkImage(
+              imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&q=80&w=1000',
               fit: BoxFit.cover,
             ),
             // The Dark Gradient Mask
@@ -694,6 +717,36 @@ class _PlannerPageState extends State<PlannerPage> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRecentSearchToken(String from, String to, String date) {
+    return GestureDetector(
+      onTap: () {
+        // Mock apply recent search
+        setState(() {
+          _fromStation = from;
+          _toStation = to;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: context.colors.brandBlue.withOpacity(0.05),
+          border: Border.all(color: context.colors.brandBlue.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(from, style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMain)),
+            Icon(PhosphorIconsBold.arrowRight, size: 10, color: context.colors.textMuted),
+            Text(to, style: context.textStyles.caption.copyWith(fontWeight: FontWeight.bold, color: context.colors.textMain)),
+            Container(width: 1, height: 10, color: context.colors.borderLight, margin: const EdgeInsets.symmetric(horizontal: 6)),
+            Text(date, style: context.textStyles.caption.copyWith(color: context.colors.brandBlue)),
+          ],
+        ),
       ),
     );
   }

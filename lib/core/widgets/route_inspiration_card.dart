@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class RouteInspirationCard extends StatelessWidget {
   final String imageUrl;
@@ -42,10 +43,10 @@ class RouteInspirationCard extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               // Background Image
-              Image.network(
-                imageUrl,
+              CachedNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
+                errorWidget: (context, url, error) => Container(
                   color: context.colors.borderLight,
                   child: const Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
                 ),

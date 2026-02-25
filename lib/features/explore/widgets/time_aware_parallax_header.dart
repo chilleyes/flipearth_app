@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class TimeAwareParallaxHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
@@ -45,9 +46,10 @@ class TimeAwareParallaxHeaderDelegate extends SliverPersistentHeaderDelegate {
       skyGradient = [Colors.blue.shade400, Colors.lightBlue.shade100];
     }
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
+    return RepaintBoundary(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
         // Layer 0: Sky Gradient (Background)
         Container(
           decoration: BoxDecoration(
@@ -73,8 +75,8 @@ class TimeAwareParallaxHeaderDelegate extends SliverPersistentHeaderDelegate {
           bottom: -50 + (safeProgress * 50), // Parallax translation
           child: Opacity(
             opacity: 1.0 - (safeProgress * 0.5),
-            child: Image.network(
-              'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1200',
+            child: CachedNetworkImage(
+              imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1200',
               fit: BoxFit.cover,
               height: 300,
               color: isNight ? Colors.black.withOpacity(0.5) : (isDusk ? Colors.deepPurple.withOpacity(0.3) : Colors.transparent),
@@ -174,6 +176,7 @@ class TimeAwareParallaxHeaderDelegate extends SliverPersistentHeaderDelegate {
           ),
         ),
       ],
+      ),
     );
   }
 }

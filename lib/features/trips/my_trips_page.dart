@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../itinerary/itinerary_detail_page.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/widgets/shimmer_skeleton.dart';
 import '../../core/widgets/empty_state_widget.dart';
 
@@ -69,10 +70,12 @@ class _MyTripsPageState extends State<MyTripsPage> {
       backgroundColor: Colors.white.withOpacity(0.8),
       elevation: 0,
       scrolledUnderElevation: 0,
-      flexibleSpace: ClipRRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(color: Colors.transparent),
+      flexibleSpace: RepaintBoundary(
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(color: Colors.transparent),
+          ),
         ),
       ),
       bottom: PreferredSize(
@@ -120,8 +123,8 @@ class _MyTripsPageState extends State<MyTripsPage> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&q=80&w=1000',
+                  CachedNetworkImage(
+                    imageUrl: 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&q=80&w=1000',
                     fit: BoxFit.cover,
                   ),
                   // Gradient Overlay
@@ -305,10 +308,11 @@ class _MyTripsPageState extends State<MyTripsPage> {
   }
 
   Widget _buildLiveProgressBar() {
-    return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-        child: Container(
+    return RepaintBoundary(
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           color: Colors.black.withOpacity(0.4),
           child: Column(
@@ -378,6 +382,7 @@ class _MyTripsPageState extends State<MyTripsPage> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

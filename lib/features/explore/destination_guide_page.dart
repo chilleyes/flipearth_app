@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../planner/planner_page.dart';
@@ -36,7 +37,7 @@ class _DestinationGuidePageState extends State<DestinationGuidePage> {
 
   Future<void> _extractColor() async {
     try {
-      final imageProvider = NetworkImage(widget.imageUrl);
+      final imageProvider = CachedNetworkImageProvider(widget.imageUrl);
       final colorScheme = await ColorScheme.fromImageProvider(provider: imageProvider);
       if (mounted) {
         setState(() {
@@ -96,8 +97,8 @@ class _DestinationGuidePageState extends State<DestinationGuidePage> {
           children: [
             Hero(
               tag: widget.heroTag,
-              child: Image.network(
-                widget.imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: widget.imageUrl,
                 fit: BoxFit.cover,
               ),
             ),

@@ -5,6 +5,7 @@ import '../explore/explore_page.dart';
 import '../trips/my_trips_page.dart';
 import '../tickets/my_tickets_page.dart';
 import '../profile/profile_page.dart';
+import '../../core/theme/app_colors.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -33,13 +34,41 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWideScreen = MediaQuery.of(context).size.width > 600;
+
     return Scaffold(
       extendBody: true, // This is crucial for the Glass Nav to overlap the content
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: GlassBottomNavBar(
+      body: isWideScreen 
+        ? Row(
+            children: [
+              NavigationRail(
+                selectedIndex: _currentIndex,
+                onDestinationSelected: _onTabTapped,
+                labelType: NavigationRailLabelType.all,
+                backgroundColor: context.colors.background,
+                selectedIconTheme: IconThemeData(color: context.colors.brandBlue),
+                unselectedIconTheme: IconThemeData(color: context.colors.textMuted),
+                destinations: const [
+                  NavigationRailDestination(icon: Icon(Icons.explore_outlined), selectedIcon: Icon(Icons.explore), label: Text('探索')),
+                  NavigationRailDestination(icon: Icon(Icons.train_outlined), selectedIcon: Icon(Icons.train), label: Text('行程定')),
+                  NavigationRailDestination(icon: Icon(Icons.map_outlined), selectedIcon: Icon(Icons.map), label: Text('我的行程')),
+                  NavigationRailDestination(icon: Icon(Icons.receipt_long_outlined), selectedIcon: Icon(Icons.receipt_long), label: Text('我的车票')),
+                  NavigationRailDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: Text('我的')),
+                ],
+              ),
+              Expanded(
+                child: IndexedStack(
+                  index: _currentIndex,
+                  children: _pages,
+                ),
+              ),
+            ],
+          )
+        : IndexedStack(
+            index: _currentIndex,
+            children: _pages,
+          ),
+      bottomNavigationBar: isWideScreen ? null : GlassBottomNavBar(
         currentIndex: _currentIndex,
         onTabSelected: _onTabTapped,
       ),
