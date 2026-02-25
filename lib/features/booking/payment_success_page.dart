@@ -6,7 +6,16 @@ import '../../core/theme/app_text_styles.dart';
 import '../tickets/my_tickets_page.dart';
 
 class PaymentSuccessPage extends StatefulWidget {
-  const PaymentSuccessPage({super.key});
+  final String? bookingReference;
+  final double? amount;
+  final String? currency;
+
+  const PaymentSuccessPage({
+    super.key,
+    this.bookingReference,
+    this.amount,
+    this.currency,
+  });
 
   @override
   State<PaymentSuccessPage> createState() => _PaymentSuccessPageState();
@@ -114,7 +123,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> with SingleTick
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('订单编号', style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted)),
-                              Text('FE-889341', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                              Text(widget.bookingReference ?? 'N/A', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
                             ],
                           ),
                           Divider(height: 24, color: context.colors.borderLight),
@@ -122,7 +131,10 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> with SingleTick
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('实付金额', style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted)),
-                              Text('€ 47.00', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: context.colors.brandBlue)),
+                              Text(
+                                widget.amount != null ? '€ ${widget.amount!.toStringAsFixed(2)}' : 'N/A',
+                                style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: context.colors.brandBlue),
+                              ),
                             ],
                           ),
                         ],

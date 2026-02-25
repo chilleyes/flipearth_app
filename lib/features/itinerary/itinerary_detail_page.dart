@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/models/itinerary.dart';
+import '../../core/providers/service_provider.dart';
 import '../booking/booking_page.dart';
 
 class ItineraryDetailPage extends StatefulWidget {
-  const ItineraryDetailPage({super.key});
+  final int itineraryId;
+
+  const ItineraryDetailPage({super.key, required this.itineraryId});
 
   @override
   State<ItineraryDetailPage> createState() => _ItineraryDetailPageState();
@@ -22,10 +26,14 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
   int _currentMapIndex = 0;
   Color? _dominantColor;
 
+  Itinerary? _itinerary;
+  bool _isLoading = true;
+  String? _error;
+
   final List<Offset> _mapPoints = const [
-    Offset(300, 300), // London
-    Offset(400, 375), // Train Route Center
-    Offset(500, 450), // Paris
+    Offset(300, 300),
+    Offset(400, 375),
+    Offset(500, 450),
   ];
 
   @override
@@ -38,6 +46,7 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
     _mapPageController = PageController(viewportFraction: 0.85);
 
     _extractColor();
+    _loadItinerary();
 
     _mapPanController.addListener(() {
       if (_mapPanAnimation != null) {
@@ -48,6 +57,26 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animateMapTo(_mapPoints[0], scale: 1.5);
     });
+  }
+
+  Future<void> _loadItinerary() async {
+    final service = ServiceProvider().itineraryService;
+    try {
+      final itinerary = await service.getDetail(widget.itineraryId);
+      if (itinerary.isGenerating) {
+        await for (final updated in service.pollUntilReady(widget.itineraryId)) {
+          if (mounted) {
+            setState(() => _itinerary = updated);
+            if (updated.isCompleted || updated.isError) break;
+          }
+        }
+      } else {
+        if (mounted) setState(() => _itinerary = itinerary);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _error = e.toString());
+    }
+    if (mounted) setState(() => _isLoading = false);
   }
 
   Future<void> _extractColor() async {
@@ -92,14 +121,37 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: context.colors.background,
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(_itinerary?.isGenerating == true ? 'AI 正在生成行程...' : '加载中...',
+                  style: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted)),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        backgroundColor: context.colors.background,
+        appBar: AppBar(leading: IconButton(icon: const Icon(PhosphorIconsBold.arrowLeft), onPressed: () => Navigator.pop(context))),
+        body: Center(child: Text('加载失败: $_error')),
+      );
+    }
+
     return Scaffold(
       backgroundColor: context.colors.background,
       body: CustomScrollView(
         slivers: [
           _buildHeroHeader(),
           _buildStickyTabBar(),
-          
-          // Content Area mapping to the tabs
           SliverFillRemaining(
             child: TabBarView(
               controller: _tabController,
@@ -160,16 +212,18 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
                 children: [
                   Row(
                     children: [
-                      _buildGlassTag('10.01 - 10.07'),
+                      _buildGlassTag(_itinerary != null ? '${_itinerary!.startDate} ~ ${_itinerary!.endDate}' : ''),
                       const SizedBox(width: 8),
-                      _buildGlassTag('2 城 7 天'),
+                      _buildGlassTag(_itinerary != null ? '${_itinerary!.city} ${_itinerary!.days} 天' : ''),
                     ],
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    '伦敦 & 巴黎\n双城漫步之旅',
+                    _itinerary != null
+                        ? '${_itinerary!.city}\n${_itinerary!.days}日精彩之旅'
+                        : '行程详情',
                     style: context.textStyles.h1.copyWith(
-                      color: context.colors.textMain, // In original it was slate-900 but over gradient it should be dark if background becomes white at bottom
+                      color: context.colors.textMain,
                       fontSize: 32,
                     ),
                   ),
@@ -274,53 +328,56 @@ class _ItineraryDetailPageState extends State<ItineraryDetailPage> with TickerPr
   }
 
   Widget _buildTimelineTab() {
-    return ListView(
+    final days = _itinerary?.itinerary ?? [];
+    if (days.isEmpty) {
+      return Center(
+        child: Text('暂无行程数据',
+            style: context.textStyles.bodyMedium
+                .copyWith(color: context.colors.textMuted)),
+      );
+    }
+
+    return ListView.builder(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
-      children: [
-        _buildDayHeader(day: 'Day 1', subtitle: '抵达伦敦 🇬🇧'),
-        _buildTimelineEvent(
-          isLast: false,
-          indicator: Container(
-            width: 16,
-            height: 16,
-            decoration: BoxDecoration(
-              color: context.colors.background,
-              shape: BoxShape.circle,
-              border: Border.all(color: context.colors.textMain, width: 3),
-            ),
-          ),
-          lineColor: context.colors.borderLight,
-          child: _buildActivityCard(
-            time: '10:00 AM',
-            title: '大英博物馆',
-            desc: '建议游玩 3 小时。重点参观罗塞塔石碑和帕特农神庙雕塑。',
-            imageUrl: 'https://images.unsplash.com/photo-1574483733224-e67c824c65db?auto=format&fit=crop&q=80&w=200',
-          ),
-        ),
-        const SizedBox(height: 20),
-        _buildDayHeader(day: 'Day 3', subtitle: '跨国转移 🚂'),
-        _buildTimelineEvent(
-          isLast: true, // No continued line below
-          indicator: Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: context.colors.brandBlue,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: context.colors.brandBlue.withOpacity(0.3),
-                  spreadRadius: 4,
+      itemCount: days.length,
+      itemBuilder: (context, dayIndex) {
+        final day = days[dayIndex];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildDayHeader(
+                day: 'Day ${day.day}', subtitle: '${day.city} · ${day.date}'),
+            ...day.activities.asMap().entries.map((entry) {
+              final actIndex = entry.key;
+              final act = entry.value;
+              final isLast = actIndex == day.activities.length - 1 &&
+                  dayIndex == days.length - 1;
+              return _buildTimelineEvent(
+                isLast: isLast,
+                indicator: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: context.colors.background,
+                    shape: BoxShape.circle,
+                    border:
+                        Border.all(color: context.colors.textMain, width: 3),
+                  ),
                 ),
-              ],
-            ),
-            child: const Icon(PhosphorIconsFill.train, color: Colors.white, size: 12),
-          ),
-          lineColor: context.colors.brandBlue,
-          isDashed: true,
-          child: _buildTrainTicketCard(),
-        ),
-      ],
+                lineColor: context.colors.borderLight,
+                child: _buildActivityCard(
+                  time: act.time,
+                  title: act.activity,
+                  desc: act.details ?? '',
+                  imageUrl:
+                      'https://images.unsplash.com/photo-1574483733224-e67c824c65db?auto=format&fit=crop&q=80&w=200',
+                ),
+              );
+            }),
+            if (dayIndex < days.length - 1) const SizedBox(height: 20),
+          ],
+        );
+      },
     );
   }
 

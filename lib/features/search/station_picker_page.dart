@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/models/station.dart';
+import '../../core/providers/service_provider.dart';
 
 class StationPickerPage extends StatefulWidget {
   const StationPickerPage({super.key});
@@ -12,29 +15,65 @@ class StationPickerPage extends StatefulWidget {
 
 class _StationPickerPageState extends State<StationPickerPage> {
   final TextEditingController _searchController = TextEditingController();
+  final _stationService = ServiceProvider().stationService;
 
-  final List<String> _recentStations = [
-    '伦敦 St Pancras Int.',
-    '巴黎 Gare du Nord',
-    '阿姆斯特丹 Centraal',
-  ];
+  List<Station> _popularStations = [];
+  List<Station> _searchResults = [];
+  bool _isSearching = false;
+  bool _loadingPopular = true;
+  Timer? _debounce;
 
-  final List<Map<String, String>> _popularStations = [
-    {'city': '伦敦', 'station': 'St Pancras Int.', 'flag': '🇬🇧'},
-    {'city': '巴黎', 'station': 'Gare du Nord', 'flag': '🇫🇷'},
-    {'city': '阿姆斯特丹', 'station': 'Centraal', 'flag': '🇳🇱'},
-    {'city': '布鲁塞尔', 'station': 'Midi/Zuid', 'flag': '🇧🇪'},
-    {'city': '里昂', 'station': 'Part Dieu', 'flag': '🇫🇷'},
-    {'city': '日内瓦', 'station': 'Cornavin', 'flag': '🇨🇭'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadPopularStations();
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
-  void _selectStation(String station) {
+  Future<void> _loadPopularStations() async {
+    try {
+      final stations = await _stationService.getPopular(limit: 12);
+      if (mounted) setState(() {
+        _popularStations = stations;
+        _loadingPopular = false;
+      });
+    } catch (e) {
+      if (mounted) setState(() => _loadingPopular = false);
+    }
+  }
+
+  void _onSearchChanged(String query) {
+    _debounce?.cancel();
+    if (query.length < 2) {
+      setState(() {
+        _searchResults = [];
+        _isSearching = false;
+      });
+      return;
+    }
+    _debounce = Timer(const Duration(milliseconds: 300), () async {
+      setState(() => _isSearching = true);
+      try {
+        final results = await _stationService.autocomplete(query, limit: 15);
+        if (mounted) {
+          setState(() {
+            _searchResults = results;
+            _isSearching = false;
+          });
+        }
+      } catch (e) {
+        if (mounted) setState(() => _isSearching = false);
+      }
+    });
+  }
+
+  void _selectStation(Station station) {
     Navigator.pop(context, station);
   }
 
@@ -55,18 +94,18 @@ class _StationPickerPageState extends State<StationPickerPage> {
           autofocus: true,
           decoration: InputDecoration(
             hintText: '搜索城市或车站...',
-            hintStyle: context.textStyles.bodyMedium.copyWith(color: context.colors.textMuted),
+            hintStyle: context.textStyles.bodyMedium
+                .copyWith(color: context.colors.textMuted),
             border: InputBorder.none,
           ),
-          style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
-          onChanged: (value) {
-            // Setup simple local filter if needed in future
-            setState(() {});
-          },
+          style: context.textStyles.bodyMedium
+              .copyWith(fontWeight: FontWeight.bold),
+          onChanged: _onSearchChanged,
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: context.colors.borderLight, height: 1.0),
+          child:
+              Container(color: context.colors.borderLight, height: 1.0),
         ),
       ),
       body: _buildBody(),
@@ -74,49 +113,27 @@ class _StationPickerPageState extends State<StationPickerPage> {
   }
 
   Widget _buildBody() {
-    if (_searchController.text.isNotEmpty) {
+    if (_isSearching) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_searchController.text.length >= 2) {
       return _buildSearchResults();
     }
 
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        if (_recentStations.isNotEmpty) ...[
-          Text('最近搜索', style: context.textStyles.h3),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: _recentStations.map((station) => _buildRecentChip(station)).toList(),
-          ),
-          const SizedBox(height: 32),
-        ],
         Text('热门车站', style: context.textStyles.h3),
         const SizedBox(height: 12),
-        _buildPopularGrid(),
+        if (_loadingPopular)
+          const Center(child: Padding(
+            padding: EdgeInsets.all(32),
+            child: CircularProgressIndicator(),
+          ))
+        else
+          _buildPopularGrid(),
       ],
-    );
-  }
-
-  Widget _buildRecentChip(String station) {
-    return GestureDetector(
-      onTap: () => _selectStation(station),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: context.colors.borderLight),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(PhosphorIconsRegular.clock, size: 16, color: context.colors.textMuted),
-            const SizedBox(width: 6),
-            Text(station, style: context.textStyles.bodySmall.copyWith(fontWeight: FontWeight.w600)),
-          ],
-        ),
-      ),
     );
   }
 
@@ -125,43 +142,86 @@ class _StationPickerPageState extends State<StationPickerPage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: _popularStations.length,
-      separatorBuilder: (_, __) => Divider(height: 1, color: context.colors.borderLight),
+      separatorBuilder: (_, __) =>
+          Divider(height: 1, color: context.colors.borderLight),
       itemBuilder: (context, index) {
-        final item = _popularStations[index];
-        final fullName = '${item['city']} ${item['station']}';
+        final station = _popularStations[index];
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
           leading: Container(
-            width: 40, height: 40,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: context.colors.brandBlue.withOpacity(0.05),
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
-            child: Text(item['flag']!, style: const TextStyle(fontSize: 20)),
+            child: Text(station.flag, style: const TextStyle(fontSize: 20)),
           ),
-          title: Text(item['city']!, style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
-          subtitle: Text(item['station']!, style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
-          onTap: () => _selectStation(fullName),
+          title: Text(station.city ?? station.name,
+              style: context.textStyles.bodyMedium
+                  .copyWith(fontWeight: FontWeight.bold)),
+          subtitle: Text(station.name,
+              style: context.textStyles.caption
+                  .copyWith(color: context.colors.textMuted)),
+          trailing: station.isEurostarDirect == true
+              ? Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: context.colors.brandBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text('直达',
+                      style: context.textStyles.caption.copyWith(
+                          color: context.colors.brandBlue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10)),
+                )
+              : null,
+          onTap: () => _selectStation(station),
         );
       },
     );
   }
 
   Widget _buildSearchResults() {
-    // In a real app this would filter the station list actively.
-    // Since this is UI building, we simply return a mock filtered list.
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: Icon(PhosphorIconsFill.mapPin, color: context.colors.brandBlue),
-          title: Text('${_searchController.text} (模拟搜素结果)', style: context.textStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
-          subtitle: Text('所有车站', style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
-          onTap: () => _selectStation(_searchController.text),
+    if (_searchResults.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Text(
+            '未找到匹配的车站',
+            style: context.textStyles.bodyMedium
+                .copyWith(color: context.colors.textMuted),
+          ),
         ),
-      ],
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(20),
+      itemCount: _searchResults.length,
+      separatorBuilder: (_, __) =>
+          Divider(height: 1, color: context.colors.borderLight),
+      itemBuilder: (context, index) {
+        final station = _searchResults[index];
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading:
+              Icon(PhosphorIconsFill.mapPin, color: context.colors.brandBlue),
+          title: Text(station.displayName ?? station.name,
+              style: context.textStyles.bodyMedium
+                  .copyWith(fontWeight: FontWeight.bold)),
+          subtitle: station.city != null
+              ? Text('${station.city}, ${station.countryCode ?? ''}',
+                  style: context.textStyles.caption
+                      .copyWith(color: context.colors.textMuted))
+              : null,
+          onTap: () => _selectStation(station),
+        );
+      },
     );
   }
 }

@@ -1,7 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/models/itinerary.dart';
+import '../../core/providers/service_provider.dart';
+import '../../core/providers/auth_provider.dart';
 import '../itinerary/itinerary_detail_page.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -17,15 +21,31 @@ class MyTripsPage extends StatefulWidget {
 
 class _MyTripsPageState extends State<MyTripsPage> {
   bool _isLoading = true;
-  final bool _hasTrips = false; // Toggle this to test
+  List<Itinerary> _trips = [];
 
   @override
   void initState() {
     super.initState();
-    // Simulate network delay
-    Future.delayed(const Duration(seconds: 2), () {
+    _loadTrips();
+  }
+
+  Future<void> _loadTrips() async {
+    final auth = context.read<AuthProvider>();
+    if (!auth.isLoggedIn) {
+      setState(() => _isLoading = false);
+      return;
+    }
+    try {
+      final result = await ServiceProvider().itineraryService.getList();
+      if (mounted) {
+        setState(() {
+          _trips = result.items;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
       if (mounted) setState(() => _isLoading = false);
-    });
+    }
   }
 
   @override
@@ -44,14 +64,17 @@ class _MyTripsPageState extends State<MyTripsPage> {
                   if (_isLoading) ...[
                     const TripSkeletonCard(),
                     const TripSkeletonCard(),
-                  ] else if (!_hasTrips) ...[
+                  ] else if (_trips.isEmpty) ...[
                     const EmptyStateWidget(
                       title: '暂无行程',
                       subtitle: '世界那么大，是不是该去看看了？',
                       icon: PhosphorIconsRegular.paperPlaneRight,
                     ),
                   ] else ...[
-                    _buildTripCard(context),
+                    ..._trips.map((trip) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: _buildTripCard(context, trip),
+                        )),
                   ],
                   // Additional space if there were more cards
                 ],
@@ -92,12 +115,12 @@ class _MyTripsPageState extends State<MyTripsPage> {
     );
   }
 
-  Widget _buildTripCard(BuildContext context) {
+  Widget _buildTripCard(BuildContext context, Itinerary trip) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ItineraryDetailPage()),
+          MaterialPageRoute(builder: (context) => ItineraryDetailPage(itineraryId: trip.id)),
         );
       },
       child: Container(
@@ -175,14 +198,14 @@ class _MyTripsPageState extends State<MyTripsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '伦敦 & 巴黎 双城之旅',
+                    '${trip.city} ${trip.days}日之旅',
                     style: context.textStyles.h2.copyWith(fontSize: 19),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '10月1日 - 10月7日 · 2城7天',
+                    '${trip.startDate} ~ ${trip.endDate} · ${trip.city} ${trip.days}天',
                     style: context.textStyles.bodySmall.copyWith(
                       color: context.colors.textMuted,
                       fontWeight: FontWeight.w500,

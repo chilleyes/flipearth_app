@@ -4,40 +4,73 @@
 *.pyc
 *.swp
 .DS_Store
+Thumbs.db
 .atom/
 .buildlog/
 .history
 .svn/
 migrate_working_dir/
 
-# IntelliJ related
+# IntelliJ / Android Studio
 *.iml
 *.ipr
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code（若希望提交工作区配置可注释掉下一行）
+.vscode/
 
-# Flutter/Dart/Pub related
+# Flutter / Dart / Pub
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
 
-# Symbolication related
+# Symbolication / Obfuscation
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+# Android
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/.gradle/
+/android/local.properties
+/android/captures/
+/android/**/key.properties
+*.jks
+*.keystore
+
+# iOS
+/ios/Pods/
+/ios/.symlinks/
+/ios/**/DerivedData/
+/ios/**/xcuserdata/
+/ios/**/.symlinks/
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/ephemeral/
+
+# macOS (Flutter)
+/macos/Flutter/ephemeral/
+
+# Windows (Flutter) 仅忽略缓存目录，generated 文件保留提交
+/windows/flutter/ephemeral/
+
+# Linux (Flutter) 仅忽略缓存目录，generated 文件保留提交
+/linux/flutter/ephemeral/
+
+# Coverage
+coverage/
+
+# 环境变量与密钥（勿提交）
+.env
+.env.*
+!.env.example

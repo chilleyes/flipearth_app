@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/glow_tag.dart';
 import '../../core/widgets/route_inspiration_card.dart';
 import '../../core/widgets/glow_fab.dart';
+import '../../core/models/station.dart';
+import '../../core/providers/service_provider.dart';
+import '../../core/providers/auth_provider.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../search/station_picker_page.dart';
 import '../search/widgets/passenger_selector_sheet.dart';
 import '../search/widgets/calendar_bottom_sheet.dart';
+import '../booking/booking_page.dart';
+import '../itinerary/itinerary_detail_page.dart';
 
 class PlannerPage extends StatefulWidget {
   const PlannerPage({super.key});
@@ -19,38 +25,115 @@ class PlannerPage extends StatefulWidget {
 }
 
 class _PlannerPageState extends State<PlannerPage> {
-  // 0: AI Route Planning, 1: Direct Train Ticket
   int _segmentedControlGroupValue = 0;
   int _selectedCompanion = 0;
-  
-  // Traditional Search State
+
+  // Station data
+  Station? _fromStationData;
+  Station? _toStationData;
   String _fromStation = '伦敦 St Pancras';
   String _toStation = '巴黎 Gare du Nord';
+  String _fromUic = '7015400';
+  String _toUic = '8727100';
+
   DateTime? _outboundDate = DateTime.now().add(const Duration(days: 3));
   DateTime? _returnDate;
   int _adults = 1;
   int _youths = 0;
   int _children = 0;
 
+  // AI planner state
+  String _aiCity = '';
+  String _aiCountry = '';
+  DateTime? _aiStartDate;
+  int _aiDays = 3;
+  bool _aiLoading = false;
+
   void _swapStations() {
     setState(() {
       final temp = _fromStation;
       _fromStation = _toStation;
       _toStation = temp;
+      final tempUic = _fromUic;
+      _fromUic = _toUic;
+      _toUic = tempUic;
+      final tempData = _fromStationData;
+      _fromStationData = _toStationData;
+      _toStationData = tempData;
     });
   }
 
   bool get _isFormValid {
-    // Cannot be same station
     if (_fromStation == _toStation) return false;
-    // Must have outward date
     if (_outboundDate == null) return false;
-    // Return date cannot be before outward date
     if (_returnDate != null && _returnDate!.isBefore(_outboundDate!)) return false;
-    // Must have at least 1 passenger
     if ((_adults + _youths + _children) == 0) return false;
-    
     return true;
+  }
+
+  void _searchTrains() {
+    if (!_isFormValid) return;
+    final dateStr =
+        '${_outboundDate!.year}-${_outboundDate!.month.toString().padLeft(2, '0')}-${_outboundDate!.day.toString().padLeft(2, '0')}';
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BookingPage(
+          originUic: _fromUic,
+          destinationUic: _toUic,
+          originName: _fromStation,
+          destinationName: _toStation,
+          date: dateStr,
+          adults: _adults,
+          youth: _youths,
+          children: _children,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _createAiItinerary() async {
+    if (_aiCity.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请输入目的地城市')),
+      );
+      return;
+    }
+    final auth = context.read<AuthProvider>();
+    if (!auth.isLoggedIn) {
+      Navigator.pushNamed(context, '/login');
+      return;
+    }
+
+    setState(() => _aiLoading = true);
+    try {
+      final startDate = _aiStartDate ?? DateTime.now().add(const Duration(days: 7));
+      final dateStr =
+          '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+      final itinerary = await ServiceProvider().itineraryService.create(
+        city: _aiCity,
+        startDate: dateStr,
+        days: _aiDays,
+        country: _aiCountry.isNotEmpty ? _aiCountry : null,
+        companionType: _selectedCompanion,
+      );
+      if (mounted) {
+        setState(() => _aiLoading = false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ItineraryDetailPage(itineraryId: itinerary.id),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _aiLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('创建行程失败: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -109,13 +192,17 @@ class _PlannerPageState extends State<PlannerPage> {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: GlowFab(
                     label: _segmentedControlGroupValue == 0 
-                        ? '智能生成专属行程'
+                        ? (_aiLoading ? '正在生成中...' : '智能生成专属行程')
                         : '搜索欧洲之星车次',
                     icon: _segmentedControlGroupValue == 0 
                         ? PhosphorIconsRegular.magicWand
                         : PhosphorIconsRegular.train,
                     onTap: () {
-                      // print("Action clicked");
+                      if (_segmentedControlGroupValue == 0) {
+                        _createAiItinerary();
+                      } else {
+                        _searchTrains();
+                      }
                     },
                   ),
                 ),
@@ -138,30 +225,34 @@ class _PlannerPageState extends State<PlannerPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Destination
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: context.colors.borderLight,
-                      shape: BoxShape.circle,
+              GestureDetector(
+                onTap: () => _showCityInputDialog(),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: context.colors.borderLight,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(PhosphorIconsRegular.paperPlaneRight,
+                          color: context.colors.brandBlue, size: 20),
                     ),
-                    child: Icon(PhosphorIconsRegular.paperPlaneRight,
-                        color: context.colors.brandBlue, size: 20),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('你想去哪儿？',
-                            style: context.textStyles.bodySmall),
-                        Text('欧洲多国畅游', style: context.textStyles.h3),
-                      ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('你想去哪儿？',
+                              style: context.textStyles.bodySmall),
+                          Text(_aiCity.isNotEmpty ? _aiCity : '点击选择目的地城市',
+                              style: context.textStyles.h3),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20, top: 8, bottom: 8),
@@ -174,26 +265,94 @@ class _PlannerPageState extends State<PlannerPage> {
                 ),
               ),
               // Dates
+              GestureDetector(
+                onTap: () async {
+                  final picked = await showModalBottomSheet<DateTime>(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => CalendarBottomSheet(
+                      initialDate: _aiStartDate ?? DateTime.now().add(const Duration(days: 7)),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                      isOutbound: true,
+                    ),
+                  );
+                  if (picked != null) setState(() => _aiStartDate = picked);
+                },
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: context.colors.borderLight,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(PhosphorIconsRegular.calendarBlank,
+                          color: context.colors.textSecondary, size: 20),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('出发日期',
+                              style: context.textStyles.bodySmall),
+                          Text(
+                            _aiStartDate != null
+                                ? '${_aiStartDate!.month}月${_aiStartDate!.day}日 · $_aiDays 天'
+                                : '选择出发日期',
+                            style: context.textStyles.h3,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Days selector
               Row(
                 children: [
+                  Text('旅行天数', style: context.textStyles.bodySmall),
+                  const Spacer(),
                   Container(
-                    width: 40,
-                    height: 40,
                     decoration: BoxDecoration(
                       color: context.colors.borderLight,
-                      shape: BoxShape.circle,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(PhosphorIconsRegular.calendarBlank,
-                        color: context.colors.textSecondary, size: 20),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('出发日期',
-                            style: context.textStyles.bodySmall),
-                        Text('随时出发', style: context.textStyles.h3),
+                        GestureDetector(
+                          onTap: () {
+                            if (_aiDays > 1) setState(() => _aiDays--);
+                          },
+                          child: Container(
+                            width: 32, height: 32,
+                            alignment: Alignment.center,
+                            child: Icon(PhosphorIconsBold.minus,
+                                size: 14, color: context.colors.textMain),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text('$_aiDays 天',
+                              style: context.textStyles.bodyMedium
+                                  .copyWith(fontWeight: FontWeight.bold)),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            if (_aiDays < 65) setState(() => _aiDays++);
+                          },
+                          child: Container(
+                            width: 32, height: 32,
+                            alignment: Alignment.center,
+                            child: Icon(PhosphorIconsBold.plus,
+                                size: 14, color: context.colors.textMain),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -425,7 +584,7 @@ class _PlannerPageState extends State<PlannerPage> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _isFormValid ? () {} : null,
+                    onPressed: _isFormValid ? _searchTrains : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _isFormValid ? context.colors.brandBlue : context.colors.borderLight,
                       foregroundColor: Colors.white,
@@ -453,12 +612,16 @@ class _PlannerPageState extends State<PlannerPage> {
             fullscreenDialog: true,
           ),
         );
-        if (result != null && result is String) {
+        if (result != null && result is Station) {
           setState(() {
             if (isFrom) {
-              _fromStation = result;
+              _fromStationData = result;
+              _fromStation = result.city ?? result.name;
+              _fromUic = result.uicCode;
             } else {
-              _toStation = result;
+              _toStationData = result;
+              _toStation = result.city ?? result.name;
+              _toUic = result.uicCode;
             }
           });
         }
@@ -715,6 +878,54 @@ class _PlannerPageState extends State<PlannerPage> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCityInputDialog() {
+    final cityCtrl = TextEditingController(text: _aiCity);
+    final countryCtrl = TextEditingController(text: _aiCountry);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('目的地'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: cityCtrl,
+              decoration: const InputDecoration(
+                labelText: '城市名称 (英文)',
+                hintText: 'e.g. Paris, Rome, Barcelona',
+              ),
+              autofocus: true,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: countryCtrl,
+              decoration: const InputDecoration(
+                labelText: '国家 (可选)',
+                hintText: 'e.g. France',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () {
+              setState(() {
+                _aiCity = cityCtrl.text.trim();
+                _aiCountry = countryCtrl.text.trim();
+              });
+              Navigator.pop(ctx);
+            },
+            child: const Text('确定'),
           ),
         ],
       ),

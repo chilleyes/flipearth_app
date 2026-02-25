@@ -2,8 +2,12 @@ import 'dart:ui';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
+import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/models/order.dart';
+import '../../core/providers/service_provider.dart';
+import '../../core/providers/auth_provider.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/widgets/shimmer_skeleton.dart';
@@ -18,7 +22,7 @@ class MyTicketsPage extends StatefulWidget {
 
 class _MyTicketsPageState extends State<MyTicketsPage> {
   bool _isLoading = true;
-  final bool _hasTickets = true; // Set to true to test
+  List<Order> _tickets = [];
   late ConfettiController _confettiController;
   bool _isStamped = false;
 
@@ -26,9 +30,26 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
   void initState() {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 3));
-    Future.delayed(const Duration(seconds: 2), () {
+    _loadTickets();
+  }
+
+  Future<void> _loadTickets() async {
+    final auth = context.read<AuthProvider>();
+    if (!auth.isLoggedIn) {
+      setState(() => _isLoading = false);
+      return;
+    }
+    try {
+      final result = await ServiceProvider().orderService.getOrders(type: 'train', status: 'confirmed');
+      if (mounted) {
+        setState(() {
+          _tickets = result.items;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
       if (mounted) setState(() => _isLoading = false);
-    });
+    }
   }
 
   @override
@@ -51,14 +72,17 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                 children: [
                   if (_isLoading) ...[
                     const TicketSkeletonCard(),
-                  ] else if (!_hasTickets) ...[
+                  ] else if (_tickets.isEmpty) ...[
                     const EmptyStateWidget(
                       title: '暂无行程车票',
                       subtitle: '您的下一段旅程，由 FlipEarth 开启。',
                       icon: PhosphorIconsRegular.ticket,
                     ),
                   ] else ...[
-                    _buildTicketCard(),
+                    ..._tickets.map((ticket) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: _buildTicketCard(ticket),
+                        )),
                   ],
                 ],
               ),
@@ -108,7 +132,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
             ),
           ),
           Text(
-            '1 张即将出行的欧洲之星车票',
+            _isLoading ? '加载中...' : '${_tickets.length} 张即将出行的欧洲之星车票',
             style: context.textStyles.bodySmall.copyWith(
               color: context.colors.textMuted,
             ),
@@ -118,7 +142,18 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
     );
   }
 
-  Widget _buildTicketCard() {
+  String _formatStationCode(String? stationName) {
+    if (stationName == null || stationName.isEmpty) return '---';
+    final parts = stationName.split(' ');
+    if (parts.length >= 2) return parts[0].substring(0, min(3, parts[0].length)).toUpperCase();
+    return stationName.substring(0, min(3, stationName.length)).toUpperCase();
+  }
+
+  Widget _buildTicketCard(Order ticket) {
+    final originCode = _formatStationCode(ticket.origin);
+    final destCode = _formatStationCode(ticket.destination);
+    final trainNum = ticket.trainNumber ?? 'EST ---';
+
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -188,7 +223,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'LON',
+                                originCode,
                                 style: TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.w900,
@@ -198,7 +233,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'St Pancras Int.',
+                                ticket.origin ?? '',
                                 style: context.textStyles.caption.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: context.colors.textSecondary,
@@ -214,7 +249,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                           child: Column(
                             children: [
                               Text(
-                                '2h 16m',
+                                ticket.travelClass ?? '',
                                 style: context.textStyles.caption.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: context.colors.textMuted,
@@ -247,7 +282,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'EST 9014',
+                                trainNum,
                                 style: context.textStyles.caption.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: context.colors.brandBlue,
@@ -262,7 +297,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                'PAR',
+                                destCode,
                                 style: TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.w900,
@@ -272,7 +307,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Gare du Nord',
+                                ticket.destination ?? '',
                                 style: context.textStyles.caption.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: context.colors.textSecondary,
@@ -316,7 +351,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: CachedNetworkImage(
-                        imageUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FLIPEARTH-EST9014',
+                        imageUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FLIPEARTH-${ticket.bookingReference ?? trainNum}',
                         width: 110,
                         height: 110,
                       ),
