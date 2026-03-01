@@ -18,6 +18,7 @@ class CheckoutSheet extends StatefulWidget {
   final int youth;
   final int childrenCount;
   final BookingContext? bookingContext;
+  final String initialClass;
 
   const CheckoutSheet({
     super.key,
@@ -27,6 +28,7 @@ class CheckoutSheet extends StatefulWidget {
     this.youth = 0,
     this.childrenCount = 0,
     this.bookingContext,
+    this.initialClass = 'standard',
   });
 
   @override
@@ -43,12 +45,14 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
   bool _loadingTravelers = true;
   Traveler? _selectedTraveler;
 
-  final _classNames = ['standard', 'premier', 'business'];
-  final _classLabels = ['Standard', 'Premier', 'Business'];
+  final _classNames = ['standard', 'plus', 'premier'];
+  final _classLabels = ['Standard', 'Plus', 'Premier'];
 
   @override
   void initState() {
     super.initState();
+    final idx = _classNames.indexOf(widget.initialClass);
+    if (idx >= 0) _selectedClassIndex = idx;
     _loadTravelers();
   }
 
@@ -91,8 +95,10 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
     });
 
     try {
+      final classKey = _classNames[_selectedClassIndex];
+      final classOfferId = widget.train.prices[classKey]?.offerId;
       final booking = await _services.eurostarService.createBooking(
-        offerId: widget.train.offerId,
+        offerId: classOfferId ?? widget.train.offerId,
         searchId: widget.train.searchId,
         trainId: widget.train.trainId,
         travelClass: _classNames[_selectedClassIndex],

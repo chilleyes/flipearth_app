@@ -376,237 +376,249 @@ class _BookingPageState extends State<BookingPage> {
   }
 
   Widget _buildTrainCard(TrainResult train, {bool isFastest = false}) {
-    final cheapest = train.cheapestPrice;
-    final currency = train.cheapestCurrency;
-    final standardAvail =
-        train.prices['standard']?.availability ?? 'none';
+    final colors = context.colors;
+    final textStyles = context.textStyles;
 
-    return SpringButton(
-      onTap: () => _showCheckoutBottomSheet(context, train),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isFastest
-                ? context.colors.brandBlue.withOpacity(0.3)
-                : context.colors.borderLight,
-          ),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 20,
-                offset: const Offset(0, 5)),
-          ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isFastest
+              ? colors.brandBlue.withOpacity(0.3)
+              : colors.borderLight,
         ),
-        clipBehavior: Clip.hardEdge,
-        child: Stack(
-          children: [
-            if (isFastest)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: context.colors.brandBlue.withOpacity(0.1),
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(12)),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(PhosphorIconsFill.lightning,
-                          color: context.colors.brandBlue, size: 12),
-                      const SizedBox(width: 4),
-                      Text('最快到达',
-                          style: context.textStyles.caption.copyWith(
-                              color: context.colors.brandBlue,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10)),
-                    ],
-                  ),
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 20,
+              offset: const Offset(0, 5)),
+        ],
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isFastest)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              color: colors.brandBlue.withOpacity(0.06),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 6,
-                        child: Column(
-                          children: [
-                            _buildTimeRow(train.departureTime,
-                                train.origin.name,
-                                isStart: true),
-                            const SizedBox(height: 16),
-                            _buildTimeRow(train.arrivalTime,
-                                train.destination.name,
-                                isStart: false),
-                          ],
-                        ),
-                      ),
-                      Container(
-                          width: 1,
-                          height: 60,
-                          color: context.colors.borderLight),
-                      Expanded(
-                        flex: 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text('STANDARD起',
-                                style: context.textStyles.caption.copyWith(
-                                    color: context.colors.textMuted,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 10,
-                                    letterSpacing: 0.5)),
-                            const SizedBox(height: 4),
-                            Text(
-                              cheapest != null
-                                  ? '€${cheapest.toStringAsFixed(0)}'
-                                  : 'N/A',
-                              style: context.textStyles.h1.copyWith(
-                                  fontSize: 32, letterSpacing: -1.0),
-                            ),
-                            if (standardAvail != 'none') ...[
-                              const SizedBox(height: 4),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                    color: _availColor(standardAvail)
-                                        .withOpacity(0.1),
-                                    borderRadius:
-                                        BorderRadius.circular(4)),
-                                child: Text(
-                                  _availLabel(standardAvail),
-                                  style: context.textStyles.caption
-                                      .copyWith(
-                                          color: _availColor(
-                                              standardAvail),
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 10),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: context.colors.background,
-                      border:
-                          Border.all(color: context.colors.borderLight),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(PhosphorIconsFill.clock,
-                            color: context.colors.textMuted, size: 14),
-                        const SizedBox(width: 6),
-                        Text(train.duration,
-                            style: context.textStyles.caption.copyWith(
-                                color: context.colors.textMuted,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 11)),
-                        Container(
-                          width: 4,
-                          height: 4,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 12),
-                          decoration: BoxDecoration(
-                              color: context.colors.textMuted,
-                              shape: BoxShape.circle),
-                        ),
-                        Icon(PhosphorIconsFill.train,
-                            color: context.colors.textMuted, size: 14),
-                        const SizedBox(width: 6),
-                        Text(
-                          '${train.trainNumber}${train.isDirect ? ' (直达)' : ''}',
-                          style: context.textStyles.caption.copyWith(
-                              color: context.colors.textMuted,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11),
-                        ),
-                      ],
-                    ),
-                  ),
+                  Icon(PhosphorIconsFill.lightning,
+                      color: colors.brandBlue, size: 12),
+                  const SizedBox(width: 4),
+                  Text('最快到达',
+                      style: textStyles.caption.copyWith(
+                          color: colors.brandBlue,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 10)),
                 ],
               ),
             ),
-          ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
+            child: Row(
+              children: [
+                _buildTimeColumn(textStyles, colors, train.departureTime, train.origin.name, true),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          _buildTimeDot(colors, true),
+                          Expanded(child: Container(height: 1.5, color: colors.borderLight)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: colors.background,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: colors.borderLight),
+                            ),
+                            child: Text(
+                              train.duration,
+                              style: textStyles.caption.copyWith(fontSize: 9, color: colors.textMuted, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                          Expanded(child: Container(height: 1.5, color: colors.borderLight)),
+                          _buildTimeDot(colors, false),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            train.isDirect ? PhosphorIconsFill.arrowRight : PhosphorIconsFill.shuffle,
+                            size: 10,
+                            color: train.isDirect ? const Color(0xFF22C55E) : const Color(0xFFF59E0B),
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            train.isDirect ? '直达' : '${train.legCount - 1}次换乘',
+                            style: textStyles.caption.copyWith(
+                              fontSize: 9,
+                              color: train.isDirect ? const Color(0xFF22C55E) : const Color(0xFFF59E0B),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                _buildTimeColumn(textStyles, colors, train.arrivalTime, train.destination.name, false),
+              ],
+            ),
+          ),
+
+          Container(
+            padding: const EdgeInsets.only(left: 6, right: 6, bottom: 2),
+            child: Text(
+              train.trainNumber,
+              style: textStyles.caption.copyWith(fontSize: 9, color: colors.textMuted),
+            ),
+          ),
+
+          Divider(height: 1, color: colors.borderLight),
+
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 8, 6, 10),
+            child: Row(
+              children: [
+                _buildFareColumn(colors, textStyles, train, 'standard', 'Standard'),
+                _buildFareDivider(colors),
+                _buildFareColumn(colors, textStyles, train, 'plus', 'Plus'),
+                _buildFareDivider(colors),
+                _buildFareColumn(colors, textStyles, train, 'premier', 'Premier'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeColumn(AppTextStylesExtension textStyles, AppColorsExtension colors, String time, String station, bool isStart) {
+    return SizedBox(
+      width: 72,
+      child: Column(
+        crossAxisAlignment: isStart ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+        children: [
+          Text(
+            time,
+            style: textStyles.h2.copyWith(fontSize: 22, letterSpacing: -0.5),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            station,
+            style: textStyles.caption.copyWith(
+                color: colors.textMuted, fontSize: 10, fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: isStart ? TextAlign.left : TextAlign.right,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeDot(AppColorsExtension colors, bool isStart) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isStart ? colors.textMain : colors.brandBlue,
+          width: 2,
         ),
       ),
     );
   }
 
-  Color _availColor(String avail) {
-    switch (avail) {
-      case 'high':
-        return const Color(0xFF059669);
-      case 'medium':
-        return const Color(0xFFF59E0B);
-      case 'low':
-        return const Color(0xFFEF4444);
-      default:
-        return Colors.grey;
-    }
+  Widget _buildFareDivider(AppColorsExtension colors) {
+    return Container(width: 1, height: 50, color: colors.borderLight);
   }
 
-  String _availLabel(String avail) {
-    switch (avail) {
-      case 'high':
-        return '余票充足';
-      case 'medium':
-        return '余票紧张';
-      case 'low':
-        return '仅剩少量';
-      default:
-        return '';
-    }
-  }
+  Widget _buildFareColumn(
+    AppColorsExtension colors,
+    AppTextStylesExtension textStyles,
+    TrainResult train,
+    String fareKey,
+    String fareLabel,
+  ) {
+    final option = train.prices[fareKey];
+    final hasPrice = option != null && option.price > 0;
 
-  Widget _buildTimeRow(String time, String station,
-      {required bool isStart}) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 70,
-          child: Text(time,
-              style: context.textStyles.h2
-                  .copyWith(fontSize: 22, letterSpacing: -0.5)),
-        ),
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(
-                color: isStart
-                    ? context.colors.textMain
-                    : context.colors.brandBlue,
-                width: 2),
+    return Expanded(
+      child: SpringButton(
+        onTap: () {
+          if (hasPrice) {
+            _showCheckoutBottomSheet(context, train, selectedClass: fareKey);
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                fareLabel.toUpperCase(),
+                style: textStyles.caption.copyWith(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
+                  color: colors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 6),
+              if (!hasPrice)
+                Text(
+                  '-',
+                  style: textStyles.bodyMedium.copyWith(
+                    color: colors.borderLight,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                )
+              else ...[
+                if (option!.hasDiscount) ...[
+                  Text(
+                    '€${option.price.toStringAsFixed(0)}',
+                    style: textStyles.h3.copyWith(
+                      color: const Color(0xFFD97706),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    '€${option.originalPrice!.toStringAsFixed(0)}',
+                    style: textStyles.caption.copyWith(
+                      color: colors.textMuted,
+                      fontSize: 10,
+                      decoration: TextDecoration.lineThrough,
+                      decorationColor: colors.textMuted,
+                    ),
+                  ),
+                ] else
+                  Text(
+                    '€${option.price.toStringAsFixed(0)}',
+                    style: textStyles.h3.copyWith(
+                      color: const Color(0xFF15803D),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+              ],
+            ],
           ),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(station,
-              style: context.textStyles.caption.copyWith(
-                  color: context.colors.textSecondary,
-                  fontWeight: FontWeight.bold)),
-        ),
-      ],
+      ),
     );
   }
 
@@ -638,7 +650,7 @@ class _BookingPageState extends State<BookingPage> {
     );
   }
 
-  void _showCheckoutBottomSheet(BuildContext context, TrainResult train) {
+  void _showCheckoutBottomSheet(BuildContext context, TrainResult train, {String selectedClass = 'standard'}) {
     final auth = context.read<AuthProvider>();
     if (!auth.isLoggedIn) {
       Navigator.pushNamed(context, '/login');
@@ -657,6 +669,7 @@ class _BookingPageState extends State<BookingPage> {
           youth: widget.youth,
           childrenCount: widget.children,
           bookingContext: widget.bookingContext,
+          initialClass: selectedClass,
         );
       },
     );
