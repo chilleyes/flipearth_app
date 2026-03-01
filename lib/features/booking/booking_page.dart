@@ -691,9 +691,13 @@ class _BookingPageState extends State<BookingPage> {
 
     try {
       final classOfferId = train.prices[selectedClass]?.offerId;
+      final finalOfferId = classOfferId ?? train.offerId;
+
+      debugPrint('[Booking] offerId=$finalOfferId (class=$classOfferId, root=${train.offerId})');
+      debugPrint('[Booking] searchId=${train.searchId}, trainId=${train.trainId}, class=$selectedClass');
 
       final booking = await _eurostarService.createBooking(
-        offerId: classOfferId ?? train.offerId,
+        offerId: finalOfferId,
         searchId: train.searchId,
         trainId: train.trainId,
         travelClass: selectedClass,

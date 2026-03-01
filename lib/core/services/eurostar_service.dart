@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../models/train.dart';
 import '../models/booking.dart';
 import '../models/order.dart';
@@ -34,6 +35,11 @@ class EurostarService {
     final response = await _api.dio.get('/eurostar/search', queryParameters: params);
     final data = _api.extractData(response);
     if (data is List) {
+      if (data.isNotEmpty) {
+        final first = data.first;
+        debugPrint('[Search] first train raw keys: ${(first as Map).keys.toList()}');
+        debugPrint('[Search] offerId=${first['offerId']}, offerIds=${first['offerIds']}, searchId=${first['searchId']}, reSearchId=${first['reSearchId']}');
+      }
       return data.map((t) => TrainResult.fromJson(t)).toList();
     }
     return [];
