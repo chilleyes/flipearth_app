@@ -9,7 +9,9 @@ import '../search/widgets/calendar_bottom_sheet.dart';
 import 'plan_step2_page.dart';
 
 class PlanStep1Page extends StatefulWidget {
-  const PlanStep1Page({super.key});
+  final bool showBackButton;
+
+  const PlanStep1Page({super.key, this.showBackButton = true});
 
   @override
   State<PlanStep1Page> createState() => _PlanStep1PageState();
@@ -35,10 +37,13 @@ class _PlanStep1PageState extends State<PlanStep1Page> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(PhosphorIcons.arrowLeft(), color: colors.textMain),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
+        leading: widget.showBackButton
+            ? IconButton(
+                icon: Icon(PhosphorIcons.arrowLeft(), color: colors.textMain),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: _buildStepIndicator(colors, 1),
         centerTitle: true,
       ),

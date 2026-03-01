@@ -18,7 +18,7 @@ class _MainLayoutState extends State<MainLayout> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const PlanStep1Page(),
+    const PlanStep1Page(showBackButton: false),
     const TripListPage(),
     const ProfilePage(),
   ];
