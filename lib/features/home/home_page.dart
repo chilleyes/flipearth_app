@@ -10,7 +10,7 @@ import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/spring_button.dart';
 import '../../core/widgets/route_inspiration_card.dart';
 import '../plan/plan_step1_page.dart';
-import '../booking/booking_page.dart';
+import '../search/train_search_page.dart';
 import '../trips/trip_detail_page.dart';
 import '../visa/visa_export_page.dart';
 
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const BookingPage()),
+          MaterialPageRoute(builder: (_) => const TrainSearchPage()),
         );
       },
       child: Container(
