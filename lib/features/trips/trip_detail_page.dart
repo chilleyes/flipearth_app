@@ -7,6 +7,7 @@ import '../../core/providers/service_provider.dart';
 import '../../core/services/api_client.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../visa/visa_export_page.dart';
 import 'widgets/trip_segment_card.dart';
 
 class TripDetailPage extends StatefulWidget {
@@ -273,9 +274,9 @@ class _TripDetailPageState extends State<TripDetailPage> {
   Widget _buildVisaButton(AppColorsExtension colors, AppTextStylesExtension textStyles) {
     return OutlinedButton(
       onPressed: () {
-        // TODO: Navigate to visa export page
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('签证行程单导出功能即将上线')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => VisaExportPage(tripId: widget.tripId)),
         );
       },
       style: OutlinedButton.styleFrom(
