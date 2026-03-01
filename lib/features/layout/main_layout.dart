@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/widgets/glass_bottom_nav.dart';
 import '../home/home_page.dart';
 import '../planner/planner_page.dart';
-import '../trips/my_trips_page.dart';
+import '../trips/trip_list_page.dart';
 import '../profile/profile_page.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -19,7 +19,7 @@ class _MainLayoutState extends State<MainLayout> {
   final List<Widget> _pages = [
     const HomePage(),
     const PlannerPage(),
-    const MyTripsPage(),
+    const TripListPage(),
     const ProfilePage(),
   ];
 
