@@ -218,7 +218,7 @@ Token 获取方式：通过 `/v1/auth/login` 或 `/v1/auth/register` 接口返�
 | limit | int | 否 | 10 | 返回数量（最大 20） |
 
 **Response:**
-```json
+```json 
 {
   "code": 0,
   "message": "success",
