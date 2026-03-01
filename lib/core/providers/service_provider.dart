@@ -6,6 +6,8 @@ import '../services/payment_service.dart';
 import '../services/order_service.dart';
 import '../services/itinerary_service.dart';
 import '../services/user_service.dart';
+import '../services/plan_service.dart';
+import '../services/trip_service.dart';
 import '../storage/secure_storage.dart';
 
 /// Lazy singleton service locator — initialised once at app start.
@@ -23,6 +25,8 @@ class ServiceProvider {
   late final OrderService orderService;
   late final ItineraryService itineraryService;
   late final UserService userService;
+  late final PlanService planService;
+  late final TripService tripService;
 
   bool _initialised = false;
 
@@ -37,6 +41,8 @@ class ServiceProvider {
     orderService = OrderService(api: apiClient);
     itineraryService = ItineraryService(api: apiClient);
     userService = UserService(api: apiClient);
+    planService = PlanService(api: apiClient);
+    tripService = TripService(api: apiClient);
     _initialised = true;
   }
 }
