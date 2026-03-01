@@ -497,7 +497,7 @@ class _TrainSearchPageState extends State<TrainSearchPage> {
 
   Widget _buildSearchButton(AppColorsExtension colors, AppTextStylesExtension textStyles) {
     return SpringButton(
-      onTap: _canSearch ? _doSearch : null,
+      onTap: _canSearch ? _doSearch : () {},
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         height: 58,
