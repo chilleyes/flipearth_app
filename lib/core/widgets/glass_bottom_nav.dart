@@ -20,7 +20,7 @@ class GlassBottomNavBar extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
-          height: 85, // Account for iOS home indicator
+          height: 85,
           padding: const EdgeInsets.only(bottom: 20),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.85),
@@ -42,9 +42,9 @@ class GlassBottomNavBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _NavBarItem(
-                icon: PhosphorIcons.compass(),
-                activeIcon: PhosphorIcons.compass(PhosphorIconsStyle.fill),
-                label: '探索',
+                icon: PhosphorIcons.house(),
+                activeIcon: PhosphorIcons.house(PhosphorIconsStyle.fill),
+                label: '首页',
                 isSelected: currentIndex == 0,
                 onTap: () => onTabSelected(0),
               ),
@@ -63,18 +63,11 @@ class GlassBottomNavBar extends StatelessWidget {
                 onTap: () => onTabSelected(2),
               ),
               _NavBarItem(
-                icon: PhosphorIcons.ticket(),
-                activeIcon: PhosphorIcons.ticket(PhosphorIconsStyle.fill),
-                label: '车票',
-                isSelected: currentIndex == 3,
-                onTap: () => onTabSelected(3),
-              ),
-              _NavBarItem(
                 icon: PhosphorIcons.user(),
                 activeIcon: PhosphorIcons.user(PhosphorIconsStyle.fill),
                 label: '我的',
-                isSelected: currentIndex == 4,
-                onTap: () => onTabSelected(4),
+                isSelected: currentIndex == 3,
+                onTap: () => onTabSelected(3),
               ),
             ],
           ),
@@ -102,7 +95,7 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isSelected ? context.colors.textMain : context.colors.textMuted;
-    
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -116,10 +109,10 @@ class _NavBarItem extends StatelessWidget {
                   color: color,
                   size: 26,
                 ).animate(key: ValueKey('active_$label')).scale(
-                      duration: 500.ms,
-                      curve: Curves.elasticOut,
-                      begin: const Offset(0.5, 0.5),
-                    )
+                    duration: 500.ms,
+                    curve: Curves.elasticOut,
+                    begin: const Offset(0.5, 0.5),
+                  )
               : Icon(
                   icon,
                   color: color,
