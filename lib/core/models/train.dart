@@ -123,15 +123,12 @@ class TrainResult {
             .toList() ??
         [];
 
-    TrainStation? originStation;
-    TrainStation? destStation;
+    TrainStation originStation;
+    TrainStation destStation;
     if (json['origin'] is Map<String, dynamic>) {
       originStation = TrainStation.fromJson(json['origin']);
     } else if (parsedSegments.isNotEmpty) {
-      originStation = TrainStation(
-        name: parsedSegments.first.origin,
-        uic: parsedSegments.first.origin,
-      );
+      originStation = parsedSegments.first.origin;
     } else {
       originStation = TrainStation(name: '', uic: '');
     }
@@ -139,10 +136,7 @@ class TrainResult {
     if (json['destination'] is Map<String, dynamic>) {
       destStation = TrainStation.fromJson(json['destination']);
     } else if (parsedSegments.isNotEmpty) {
-      destStation = TrainStation(
-        name: parsedSegments.last.destination,
-        uic: parsedSegments.last.destination,
-      );
+      destStation = parsedSegments.last.destination;
     } else {
       destStation = TrainStation(name: '', uic: '');
     }
@@ -185,8 +179,8 @@ class TrainResult {
 }
 
 class TrainSegment {
-  final String origin;
-  final String destination;
+  final TrainStation origin;
+  final TrainStation destination;
   final String departure;
   final String arrival;
   final String trainNumber;
@@ -202,15 +196,20 @@ class TrainSegment {
   });
 
   factory TrainSegment.fromJson(Map<String, dynamic> json) {
-    String extractString(dynamic val) {
-      if (val is String) return val;
-      if (val is Map) return val['name'] ?? val['city'] ?? val['uic'] ?? '';
-      return '';
+    TrainStation extractStation(dynamic val) {
+      if (val is Map<String, dynamic>) {
+        return TrainStation(
+          name: val['name'] ?? val['city'] ?? '',
+          uic: val['uic'] ?? '',
+        );
+      }
+      if (val is String) return TrainStation(name: val, uic: '');
+      return TrainStation(name: '', uic: '');
     }
 
     return TrainSegment(
-      origin: extractString(json['origin']),
-      destination: extractString(json['destination']),
+      origin: extractStation(json['origin']),
+      destination: extractStation(json['destination']),
       departure: json['departure'] ?? '',
       arrival: json['arrival'] ?? '',
       trainNumber: json['trainNumber'] ?? '',
@@ -219,8 +218,9 @@ class TrainSegment {
   }
 
   Map<String, dynamic> toJson() => {
-        'origin': origin,
-        'destination': destination,
+        'origin': origin.uic.isNotEmpty ? origin.toJson() : origin.name,
+        'destination':
+            destination.uic.isNotEmpty ? destination.toJson() : destination.name,
         'departure': departure,
         'arrival': arrival,
         'trainNumber': trainNumber,

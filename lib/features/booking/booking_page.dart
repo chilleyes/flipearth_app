@@ -700,6 +700,7 @@ class _BookingPageState extends State<BookingPage> {
         offerId: finalOfferId,
         searchId: train.searchId,
         trainId: train.trainId,
+        source: train.prices[selectedClass]?.discountSource ?? 'official',
         travelClass: selectedClass,
         date: _currentDate,
         adults: widget.adults,
