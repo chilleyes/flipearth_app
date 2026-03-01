@@ -6,7 +6,6 @@ import '../../core/theme/app_text_styles.dart';
 import '../../core/models/order.dart';
 import '../../core/providers/service_provider.dart';
 import 'order_detail_page.dart';
-import '../itinerary/itinerary_detail_page.dart';
 
 class OrderListPage extends StatefulWidget {
   const OrderListPage({super.key});
@@ -24,7 +23,6 @@ class _OrderListPageState extends State<OrderListPage>
   bool _isLoading = true;
   String? _error;
   Pagination? _pagination;
-  String? _currentType;
 
   @override
   void initState() {
@@ -50,7 +48,6 @@ class _OrderListPageState extends State<OrderListPage>
       _error = null;
     });
 
-    String? type;
     String? status;
     switch (tabIndex) {
       case 1:
@@ -63,7 +60,7 @@ class _OrderListPageState extends State<OrderListPage>
 
     try {
       final result = await _orderService.getOrders(
-          type: type, status: status, page: page);
+          type: 'train', status: status, page: page);
       if (mounted) {
         setState(() {
           _orders = result.items;
@@ -224,9 +221,7 @@ class _OrderListPageState extends State<OrderListPage>
         final order = _orders[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: order.isTrain
-              ? _buildTrainOrderCard(order)
-              : _buildItineraryCard(order),
+          child: _buildTrainOrderCard(order),
         );
       },
     );
@@ -368,89 +363,6 @@ class _OrderListPageState extends State<OrderListPage>
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11)),
                     ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildItineraryCard(Order order) {
-    return GestureDetector(
-      onTap: () {
-        if (order.id != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ItineraryDetailPage(itineraryId: order.id!),
-            ),
-          );
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: context.colors.borderLight),
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(color: context.colors.background)),
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text('行程规划',
-                            style: context.textStyles.caption.copyWith(
-                                color: Colors.purple[600],
-                                fontWeight: FontWeight.w900,
-                                fontSize: 10)),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(order.startDate ?? '',
-                          style: context.textStyles.caption.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: context.colors.textMuted)),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(20),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${order.city ?? ''} ${order.days ?? 0} 日游',
-                    style: context.textStyles.bodyMedium
-                        .copyWith(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${order.startDate ?? ''} ~ ${order.endDate ?? ''}',
-                    style: context.textStyles.caption.copyWith(
-                        color: context.colors.textMuted, fontSize: 12),
                   ),
                 ],
               ),

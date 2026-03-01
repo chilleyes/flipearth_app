@@ -1,0 +1,64 @@
+# FlipEarth App V1 内部审计报告 (Audit Report)
+
+**审计结论：核心功能已齐备，但“历史包袱”清理不达标，严重违背 PRD 的隔离要求。**
+
+虽然目前 App 已经成功集成了全新的首页、AI 规划流 (PlanStep1/2/Result) 和火车票购票、签证导出流，**但是，App 端的“遗产隔离”（Task Set 4）被 Cursor 遗漏了。** 这意味着大量会被弃用的 V0 版本老代码不仅活着，甚至还在 UI 上到处“漏风”。
+
+## 🚨 发现的严重偏差 (Discrepancies)
+
+### 1. 底部导航栏 (MainLayout) 依然指向了旧版 Planner
+在 [lib/features/layout/main_layout.dart](file:///Users/yanzhuangzhuang/workspace/flipearth_app/lib/features/layout/main_layout.dart) 中，第二个 Tab 依然引入并使用了旧版的 `PlannerPage`，而非我们刚刚千辛万苦写好的 V1 [PlanStep1Page](file:///Users/yanzhuangzhuang/workspace/flipearth_app/lib/features/plan/plan_step1_page.dart#11-17)！
+```dart
+// 目前的代码：
+import '../planner/planner_page.dart';
+...
+  final List<Widget> _pages = [
+    const HomePage(),
+    const PlannerPage(), // ❌ 致命错误：这还是那个会报错的旧版聊天式 Planner
+    const TripListPage(),
+    const ProfilePage(),
+  ];
+```
+*这会导致用户点击底部第二个 Tab 时，不仅体验割裂，而且调用的完全是旧版废弃接口。*
+
+### 2. 订单列表 (OrderListPage) 没有进行净化
+根据 [APP-REFACTOR-PLAN.md](file:///Users/yanzhuangzhuang/workspace/dream/docs/APP-REFACTOR-PLAN.md) 的要求，V1 的订单列表必须**只看真实的火车票**，将旧版的 [Itinerary](file:///Users/yanzhuangzhuang/workspace/cashcow-pro/api/controllers/ItineraryController.php#256-267) 卡片彻底隐藏。然而，[lib/features/orders/order_list_page.dart](file:///Users/yanzhuangzhuang/workspace/flipearth_app/lib/features/orders/order_list_page.dart) 中并没有下发 `type=train` 参数，导致旧版行程混杂其中，点击还会试图跳转到被废弃的 `ItineraryDetailPage`。
+```dart
+// 取代之前的：
+final result = await _orderService.getOrders(type: type, status: status, page: page);
+// 必须强行指定 type：
+final result = await _orderService.getOrders(type: 'train', status: status, page: page);
+```
+
+### 3. V0 历史页面未被删除 (Zombies Files)
+通过全局代码扫描，我发现项目中依然存在以下应该被无情抹杀的文件：
+- [lib/features/explore/explore_page.dart](file:///Users/yanzhuangzhuang/workspace/flipearth_app/lib/features/explore/explore_page.dart)
+- [lib/features/explore/destination_guide_page.dart](file:///Users/yanzhuangzhuang/workspace/flipearth_app/lib/features/explore/destination_guide_page.dart)
+- [lib/features/itinerary/itinerary_detail_page.dart](file:///Users/yanzhuangzhuang/workspace/flipearth_app/lib/features/itinerary/itinerary_detail_page.dart)
+- `lib/core/services/itinerary_service.dart`
+- [lib/features/planner/planner_page.dart](file:///Users/yanzhuangzhuang/workspace/flipearth_app/lib/features/planner/planner_page.dart) (旧版)
+- [lib/features/trips/my_trips_page.dart](file:///Users/yanzhuangzhuang/workspace/flipearth_app/lib/features/trips/my_trips_page.dart) (旧版)
+
+---
+
+## 🛠️ 下一步修复指南 (给 Cursor 的终极 Prompt)
+
+请把这份审计报告直接作为指令扔给 **Cursor Opus 4.6 (Cmd+K 或者是全局 Chat Cmd+L)**，让它执行最后这把火：
+
+```text
+@main_layout.dart @order_list_page.dart
+Cursor，我们因为漏做了 V1 重构的第四阶段（废弃旧代码），导致我们在验收时发现了严重的破绽：
+
+请立即帮我执行以下三步物理切割：
+1. 修改 `main_layout.dart`：把 import 的 `../planner/planner_page.dart` 换成 `../plan/plan_step1_page.dart`。然后把 `_pages` 数组里的 `const PlannerPage()` 替换为 `const PlanStep1Page()`！这非常关键，底部的 Plan Tab 必须导向新的 AI 提问流。
+2. 修改 `order_list_page.dart`：在 `_loadOrders` 方法里，无论是在 `case` 还是默认状态，请保证调用 `_orderService.getOrders` 时，传入强硬的 `type: 'train'` 参数！并且从这段代码里，把所有和 `order.isTrain`/`_buildItineraryCard`/`ItineraryDetailPage` 相关的判断和渲染全删除掉，只保留 `_buildTrainOrderCard(order)`！这个列表以后只认火车票！
+3. 请使用终端或者你的文件系统操作能力，在这个 Flutter 项目里彻底删除以下六个文件（不要舍不得，它们已经死了）：
+   - `lib/features/explore/explore_page.dart`
+   - `lib/features/explore/destination_guide_page.dart`
+   - `lib/features/itinerary/itinerary_detail_page.dart`
+   - `lib/core/services/itinerary_service.dart`
+   - `lib/features/planner/planner_page.dart`
+   - `lib/features/trips/my_trips_page.dart`
+```
+
+执行完以上操作，FlipEarth App V1 才算是真正符合了 PRD 的金标准！

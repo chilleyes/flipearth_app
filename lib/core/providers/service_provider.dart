@@ -4,7 +4,6 @@ import '../services/station_service.dart';
 import '../services/eurostar_service.dart';
 import '../services/payment_service.dart';
 import '../services/order_service.dart';
-import '../services/itinerary_service.dart';
 import '../services/user_service.dart';
 import '../services/plan_service.dart';
 import '../services/trip_service.dart';
@@ -24,7 +23,6 @@ class ServiceProvider {
   late final EurostarService eurostarService;
   late final PaymentService paymentService;
   late final OrderService orderService;
-  late final ItineraryService itineraryService;
   late final UserService userService;
   late final PlanService planService;
   late final TripService tripService;
@@ -41,7 +39,6 @@ class ServiceProvider {
     eurostarService = EurostarService(api: apiClient);
     paymentService = PaymentService(api: apiClient);
     orderService = OrderService(api: apiClient);
-    itineraryService = ItineraryService(api: apiClient);
     userService = UserService(api: apiClient);
     planService = PlanService(api: apiClient);
     tripService = TripService(api: apiClient);
