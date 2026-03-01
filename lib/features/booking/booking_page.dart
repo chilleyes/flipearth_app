@@ -6,6 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/widgets/spring_button.dart';
 import '../../core/models/train.dart';
+import '../../core/models/booking.dart';
 import '../../core/models/booking_context.dart';
 import '../../core/providers/service_provider.dart';
 import '../../core/providers/auth_provider.dart';
@@ -48,6 +49,7 @@ class _BookingPageState extends State<BookingPage> {
   int _selectedDateIndex = 0;
   late String _currentDate;
   late List<String> _dateLabels;
+  bool _isCreatingBooking = false;
 
   @override
   void initState() {
@@ -108,70 +110,98 @@ class _BookingPageState extends State<BookingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.background,
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(context),
-          if (widget.bookingContext != null)
-            SliverToBoxAdapter(child: _buildTripContextBanner(context)),
-          if (_isLoading)
-            const SliverFillRemaining(
-              child: Center(child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('正在搜索车次...', style: TextStyle(color: Colors.grey)),
-                  Text('该接口响应较慢，请耐心等待', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                ],
-              )),
-            )
-          else if (_error != null)
-            SliverFillRemaining(
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              _buildSliverAppBar(context),
+              if (widget.bookingContext != null)
+                SliverToBoxAdapter(child: _buildTripContextBanner(context)),
+              if (_isLoading)
+                const SliverFillRemaining(
+                  child: Center(child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text('正在搜索车次...', style: TextStyle(color: Colors.grey)),
+                      Text('该接口响应较慢，请耐心等待', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    ],
+                  )),
+                )
+              else if (_error != null)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(PhosphorIconsFill.warningCircle,
+                              size: 48, color: Colors.orange),
+                          const SizedBox(height: 16),
+                          Text('搜索失败',
+                              style: context.textStyles.h3),
+                          const SizedBox(height: 8),
+                          Text(_error!,
+                              textAlign: TextAlign.center,
+                              style: context.textStyles.caption
+                                  .copyWith(color: context.colors.textMuted)),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                            onPressed: _searchTrains,
+                            child: const Text('重试'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              else if (_trains.isEmpty)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(PhosphorIconsRegular.train,
+                            size: 48, color: context.colors.textMuted),
+                        const SizedBox(height: 16),
+                        Text('该日期暂无可用车次',
+                            style: context.textStyles.bodyMedium
+                                .copyWith(color: context.colors.textMuted)),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                _buildTrainList(),
+              const SliverToBoxAdapter(child: SizedBox(height: 120)),
+            ],
+          ),
+          if (_isCreatingBooking)
+            Container(
+              color: Colors.black.withOpacity(0.4),
               child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(PhosphorIconsFill.warningCircle,
-                          size: 48, color: Colors.orange),
+                      const CircularProgressIndicator(),
                       const SizedBox(height: 16),
-                      Text('搜索失败',
-                          style: context.textStyles.h3),
-                      const SizedBox(height: 8),
-                      Text(_error!,
-                          textAlign: TextAlign.center,
-                          style: context.textStyles.caption
-                              .copyWith(color: context.colors.textMuted)),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: _searchTrains,
-                        child: const Text('重试'),
-                      ),
+                      Text('正在创建订单...', style: context.textStyles.bodyMedium),
+                      const SizedBox(height: 4),
+                      Text('锁定票价中，请稍候',
+                          style: context.textStyles.caption.copyWith(color: context.colors.textMuted)),
                     ],
                   ),
                 ),
               ),
-            )
-          else if (_trains.isEmpty)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(PhosphorIconsRegular.train,
-                        size: 48, color: context.colors.textMuted),
-                    const SizedBox(height: 16),
-                    Text('该日期暂无可用车次',
-                        style: context.textStyles.bodyMedium
-                            .copyWith(color: context.colors.textMuted)),
-                  ],
-                ),
-              ),
-            )
-          else
-            _buildTrainList(),
-          const SliverToBoxAdapter(child: SizedBox(height: 120)),
+            ),
         ],
       ),
     );
@@ -557,8 +587,8 @@ class _BookingPageState extends State<BookingPage> {
     return Expanded(
       child: SpringButton(
         onTap: () {
-          if (hasPrice) {
-            _showCheckoutBottomSheet(context, train, selectedClass: fareKey);
+          if (hasPrice && !_isCreatingBooking) {
+            _createBookingAndCheckout(train, selectedClass: fareKey);
           }
         },
         child: Container(
@@ -650,28 +680,69 @@ class _BookingPageState extends State<BookingPage> {
     );
   }
 
-  void _showCheckoutBottomSheet(BuildContext context, TrainResult train, {String selectedClass = 'standard'}) {
+  Future<void> _createBookingAndCheckout(TrainResult train, {String selectedClass = 'standard'}) async {
     final auth = context.read<AuthProvider>();
     if (!auth.isLoggedIn) {
       Navigator.pushNamed(context, '/login');
       return;
     }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return CheckoutSheet(
-          train: train,
-          date: _currentDate,
-          adults: widget.adults,
-          youth: widget.youth,
-          childrenCount: widget.children,
-          bookingContext: widget.bookingContext,
-          initialClass: selectedClass,
-        );
-      },
-    );
+    setState(() => _isCreatingBooking = true);
+
+    try {
+      final classOfferId = train.prices[selectedClass]?.offerId;
+
+      final booking = await _eurostarService.createBooking(
+        offerId: classOfferId ?? train.offerId,
+        searchId: train.searchId,
+        trainId: train.trainId,
+        travelClass: selectedClass,
+        date: _currentDate,
+        adults: widget.adults,
+        youth: widget.youth,
+        children: widget.children,
+        origin: train.origin.name,
+        destination: train.destination.name,
+        originUic: train.origin.uic,
+        destinationUic: train.destination.uic,
+        trainNumber: train.trainNumber,
+        departureTime: train.departureTime,
+        arrivalTime: train.arrivalTime,
+        isDirect: train.isDirect,
+        legCount: train.legCount,
+        segments: train.segments.map((s) => s.toJson()).toList(),
+      );
+
+      if (!mounted) return;
+      setState(() => _isCreatingBooking = false);
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return CheckoutSheet(
+            train: train,
+            booking: booking,
+            date: _currentDate,
+            selectedClass: selectedClass,
+            adults: widget.adults,
+            youth: widget.youth,
+            childrenCount: widget.children,
+            bookingContext: widget.bookingContext,
+          );
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isCreatingBooking = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('创建订单失败: ${e.toString().replaceAll('Exception: ', '')}'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
   }
 }

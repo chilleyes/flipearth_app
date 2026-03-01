@@ -4,6 +4,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/models/train.dart';
+import '../../../core/models/booking.dart';
 import '../../../core/models/traveler.dart';
 import '../../../core/models/order.dart';
 import '../../../core/models/booking_context.dart';
@@ -13,22 +14,24 @@ import '../../profile/add_traveler_page.dart';
 
 class CheckoutSheet extends StatefulWidget {
   final TrainResult train;
+  final BookingResult booking;
   final String date;
+  final String selectedClass;
   final int adults;
   final int youth;
   final int childrenCount;
   final BookingContext? bookingContext;
-  final String initialClass;
 
   const CheckoutSheet({
     super.key,
     required this.train,
+    required this.booking,
     required this.date,
+    this.selectedClass = 'standard',
     this.adults = 1,
     this.youth = 0,
     this.childrenCount = 0,
     this.bookingContext,
-    this.initialClass = 'standard',
   });
 
   @override
@@ -38,32 +41,32 @@ class CheckoutSheet extends StatefulWidget {
 class _CheckoutSheetState extends State<CheckoutSheet> {
   final _services = ServiceProvider();
 
-  int _selectedClassIndex = 0;
   bool _isProcessing = false;
   String? _error;
   List<Traveler> _travelers = [];
   bool _loadingTravelers = true;
   Traveler? _selectedTraveler;
 
-  final _classNames = ['standard', 'plus', 'premier'];
-  final _classLabels = ['Standard', 'Plus', 'Premier'];
+  static const _classLabels = {
+    'standard': 'Standard',
+    'plus': 'Plus',
+    'premier': 'Premier',
+  };
+
+  double get _price => widget.booking.price > 0
+      ? widget.booking.price
+      : widget.train.prices[widget.selectedClass]?.price ?? 0;
+
+  String get _currency => widget.booking.currency.isNotEmpty
+      ? widget.booking.currency
+      : 'EUR';
+
+  String get _classLabel => _classLabels[widget.selectedClass] ?? widget.selectedClass;
 
   @override
   void initState() {
     super.initState();
-    final idx = _classNames.indexOf(widget.initialClass);
-    if (idx >= 0) _selectedClassIndex = idx;
     _loadTravelers();
-  }
-
-  double get _selectedPrice {
-    final className = _classNames[_selectedClassIndex];
-    return widget.train.prices[className]?.price ?? 0;
-  }
-
-  String get _selectedCurrency {
-    final className = _classNames[_selectedClassIndex];
-    return widget.train.prices[className]?.currency ?? 'EUR';
   }
 
   Future<void> _loadTravelers() async {
@@ -72,8 +75,10 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
       if (mounted) {
         setState(() {
           _travelers = travelers;
-          _selectedTraveler =
-              travelers.isNotEmpty ? travelers.firstWhere((t) => t.isDefault, orElse: () => travelers.first) : null;
+          _selectedTraveler = travelers.isNotEmpty
+              ? travelers.firstWhere((t) => t.isDefault,
+                  orElse: () => travelers.first)
+              : null;
           _loadingTravelers = false;
         });
       }
@@ -95,29 +100,6 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
     });
 
     try {
-      final classKey = _classNames[_selectedClassIndex];
-      final classOfferId = widget.train.prices[classKey]?.offerId;
-      final booking = await _services.eurostarService.createBooking(
-        offerId: classOfferId ?? widget.train.offerId,
-        searchId: widget.train.searchId,
-        trainId: widget.train.trainId,
-        travelClass: _classNames[_selectedClassIndex],
-        date: widget.date,
-        adults: widget.adults,
-        youth: widget.youth,
-        children: widget.childrenCount,
-        origin: widget.train.origin.name,
-        destination: widget.train.destination.name,
-        originUic: widget.train.origin.uic,
-        destinationUic: widget.train.destination.uic,
-        trainNumber: widget.train.trainNumber,
-        departureTime: widget.train.departureTime,
-        arrivalTime: widget.train.arrivalTime,
-        isDirect: widget.train.isDirect,
-        legCount: widget.train.legCount,
-        segments: widget.train.segments.map((s) => s.toJson()).toList(),
-      );
-
       final traveler = _selectedTraveler!;
       final travelerInfo = TravelerInfo(
         firstName: traveler.firstName,
@@ -130,27 +112,27 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
         phoneNumber: traveler.phone,
       );
 
+      final classOfferId = widget.train.prices[widget.selectedClass]?.offerId;
+
       await _services.eurostarService.preorder(
-        bookingId: booking.bookingId,
-        itemId: booking.itemId,
-        offerId: widget.train.offerId,
+        bookingId: widget.booking.bookingId,
+        itemId: widget.booking.itemId,
+        offerId: classOfferId ?? widget.train.offerId,
         searchId: widget.train.searchId,
         paymentMethod: 'stripe',
         travelers: [travelerInfo],
       );
 
       final intent = await _services.paymentService
-          .createStripeIntent(booking.bookingReference);
+          .createStripeIntent(widget.booking.bookingReference);
 
-      // In production, use flutter_stripe to present payment sheet with intent.clientSecret
-      // For now, poll payment status
       if (mounted) {
         Navigator.pop(context);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => PaymentSuccessPage(
-              bookingReference: booking.bookingReference,
+              bookingReference: widget.booking.bookingReference,
               amount: intent.amount,
               currency: intent.currency,
               bookingContext: widget.bookingContext,
@@ -194,17 +176,19 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('确认订单',
-                        style: context.textStyles.h1.copyWith(fontSize: 20)),
-                    const SizedBox(height: 2),
-                    Text(
-                        '${widget.train.departureTime} 出发 · ${widget.train.origin.name}至${widget.train.destination.name}',
-                        style: context.textStyles.bodyMedium
-                            .copyWith(color: context.colors.textMuted)),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('确认订单',
+                          style: context.textStyles.h1.copyWith(fontSize: 20)),
+                      const SizedBox(height: 2),
+                      Text(
+                          '${widget.train.departureTime} 出发 · ${widget.train.origin.name}至${widget.train.destination.name}',
+                          style: context.textStyles.bodyMedium
+                              .copyWith(color: context.colors.textMuted)),
+                    ],
+                  ),
                 ),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
@@ -220,6 +204,9 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
               ],
             ),
           ),
+
+          _buildBookingRefBanner(context),
+
           Expanded(
             child: ListView(
               padding:
@@ -238,11 +225,7 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
                   ),
                   const SizedBox(height: 16),
                 ],
-                Text('选择舱位等级',
-                    style: context.textStyles.bodyMedium
-                        .copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
-                _buildClassSelector(),
+                _buildSelectedClassInfo(context),
                 const SizedBox(height: 24),
                 _buildTravelerSection(),
                 const SizedBox(height: 16),
@@ -256,63 +239,63 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
     );
   }
 
-  Widget _buildClassSelector() {
+  Widget _buildBookingRefBanner(BuildContext context) {
+    if (widget.booking.bookingReference.isEmpty) return const SizedBox.shrink();
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(16)),
-      padding: const EdgeInsets.all(4),
+        color: context.colors.successGreen.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: context.colors.successGreen.withOpacity(0.2)),
+      ),
       child: Row(
-        children: List.generate(_classLabels.length, (index) {
-          final isSelected = _selectedClassIndex == index;
-          final price =
-              widget.train.prices[_classNames[index]]?.price;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => _selectedClassIndex = index),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.transparent,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2))
-                        ]
-                      : null,
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      _classLabels[index],
-                      style: context.textStyles.caption.copyWith(
-                        fontWeight:
-                            isSelected ? FontWeight.w900 : FontWeight.w500,
-                        color: isSelected
-                            ? context.colors.textMain
-                            : context.colors.textMuted,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      price != null ? '€${price.toStringAsFixed(0)}' : 'N/A',
-                      style: context.textStyles.caption.copyWith(
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: context.colors.textMuted,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
+        children: [
+          Icon(PhosphorIconsFill.checkCircle,
+              size: 16, color: context.colors.successGreen),
+          const SizedBox(width: 8),
+          Text(
+            '订单已锁定 · ${widget.booking.bookingReference}',
+            style: context.textStyles.caption.copyWith(
+              color: context.colors.successGreen,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectedClassInfo(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.colors.borderLight),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: context.colors.brandBlue.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              _classLabel,
+              style: context.textStyles.bodyMedium.copyWith(
+                color: context.colors.brandBlue,
+                fontWeight: FontWeight.w800,
               ),
             ),
-          );
-        }),
+          ),
+          const Spacer(),
+          Text(
+            '€${_price.toStringAsFixed(2)}',
+            style: context.textStyles.h2.copyWith(fontSize: 22),
+          ),
+        ],
       ),
     );
   }
@@ -378,8 +361,7 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
                   color: context.colors.background,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                      color: context.colors.brandBlue.withOpacity(0.3),
-                      style: BorderStyle.solid),
+                      color: context.colors.brandBlue.withOpacity(0.3)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -410,8 +392,9 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color:
-              isSelected ? context.colors.brandBlue.withOpacity(0.05) : context.colors.background,
+          color: isSelected
+              ? context.colors.brandBlue.withOpacity(0.05)
+              : context.colors.background,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
               color: isSelected
@@ -467,8 +450,8 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
       child: Column(
         children: [
           _buildSummaryRow(
-            '${widget.train.origin.name} → ${widget.train.destination.name} (${_classLabels[_selectedClassIndex]})',
-            '€${_selectedPrice.toStringAsFixed(2)}',
+            '${widget.train.origin.name} → ${widget.train.destination.name} ($_classLabel)',
+            '€${_price.toStringAsFixed(2)}',
           ),
           const SizedBox(height: 12),
           _buildSummaryRow('税费及服务费', '€0.00'),
@@ -483,7 +466,7 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
               Text('总价',
                   style: context.textStyles.bodyMedium
                       .copyWith(fontWeight: FontWeight.bold, fontSize: 16)),
-              Text('€${_selectedPrice.toStringAsFixed(2)}',
+              Text('€${_price.toStringAsFixed(2)}',
                   style: context.textStyles.h1.copyWith(fontSize: 24)),
             ],
           ),
@@ -542,7 +525,7 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
                         color: Colors.white, size: 22),
                     const SizedBox(width: 8),
                     Text(
-                        '支付 €${_selectedPrice.toStringAsFixed(2)}',
+                        '支付 €${_price.toStringAsFixed(2)}',
                         style: context.textStyles.bodyMedium.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
