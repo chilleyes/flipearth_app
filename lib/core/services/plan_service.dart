@@ -7,10 +7,10 @@ class PlanService {
 
   PlanService({required ApiClient api}) : _api = api;
 
-  /// POST /plans — create an AI travel plan
+  /// POST /plan/create — create an AI travel plan
   Future<PlanResult> createPlan(Map<String, dynamic> input) async {
     try {
-      final response = await _api.dio.post('/plans', data: input);
+      final response = await _api.dio.post('/plan/create', data: input);
       final data = _api.extractData(response);
       return PlanResult.fromJson(data);
     } on DioException {
@@ -18,10 +18,10 @@ class PlanService {
     }
   }
 
-  /// GET /plans/:id — fetch plan with options
+  /// GET /plan/:id — fetch plan with options
   Future<PlanResult> getPlan(int id) async {
     try {
-      final response = await _api.dio.get('/plans/$id');
+      final response = await _api.dio.get('/plan/$id');
       final data = _api.extractData(response);
       return PlanResult.fromJson(data);
     } on DioException {
@@ -29,11 +29,11 @@ class PlanService {
     }
   }
 
-  /// POST /plans/:planId/select — select an option, returns the created trip_id
+  /// POST /plan/:planId/select — select an option, returns the created trip_id
   Future<int> selectPlanOption(int planId, int optionId) async {
     try {
       final response = await _api.dio.post(
-        '/plans/$planId/select',
+        '/plan/$planId/select',
         data: {'option_id': optionId},
       );
       final data = _api.extractData(response);
