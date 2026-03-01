@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/models/trip.dart';
+import '../../core/models/booking_context.dart';
 import '../../core/providers/service_provider.dart';
 import '../../core/services/api_client.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../booking/booking_page.dart';
 import '../visa/visa_export_page.dart';
 import 'widgets/trip_segment_card.dart';
 
@@ -201,16 +203,12 @@ class _TripDetailPageState extends State<TripDetailPage> {
         items.add(const SizedBox(height: 4));
         items.add(_buildTimelineConnector(colors));
         items.add(const SizedBox(height: 4));
+        final seg = segments[segIdx];
         items.add(
           TripSegmentCard(
-            segment: segments[segIdx],
-            onTapSearch: segments[segIdx].status == 'planned'
-                ? () {
-                    // TODO: Navigate to search/booking flow with segment context
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('搜票功能即将上线: ${segments[segIdx].fromCity} → ${segments[segIdx].toCity}')),
-                    );
-                  }
+            segment: seg,
+            onTapSearch: seg.status == 'planned'
+                ? () => _navigateToBooking(seg)
                 : null,
           ),
         );
@@ -234,11 +232,7 @@ class _TripDetailPageState extends State<TripDetailPage> {
         TripSegmentCard(
           segment: seg,
           onTapSearch: seg.status == 'planned'
-              ? () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('搜票功能即将上线: ${seg.fromCity} → ${seg.toCity}')),
-                  );
-                }
+              ? () => _navigateToBooking(seg)
               : null,
         ),
       );
@@ -297,6 +291,33 @@ class _TripDetailPageState extends State<TripDetailPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _navigateToBooking(TripSegment segment) {
+    final dateStr =
+        '${segment.departureDate.year}-${segment.departureDate.month.toString().padLeft(2, '0')}-${segment.departureDate.day.toString().padLeft(2, '0')}';
+
+    final bookingCtx = BookingContext(
+      tripId: widget.tripId,
+      segmentId: segment.id,
+      entrySource: 'trip',
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: const RouteSettings(name: '/booking_from_trip'),
+        builder: (_) => BookingPage(
+          originUic: segment.fromStationUic ?? '7015400',
+          destinationUic: segment.toStationUic ?? '8727100',
+          originName: segment.fromCity,
+          destinationName: segment.toCity,
+          date: dateStr,
+          adults: 1,
+          bookingContext: bookingCtx,
+        ),
       ),
     );
   }

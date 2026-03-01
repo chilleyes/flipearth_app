@@ -6,6 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/widgets/spring_button.dart';
 import '../../core/models/train.dart';
+import '../../core/models/booking_context.dart';
 import '../../core/providers/service_provider.dart';
 import '../../core/providers/auth_provider.dart';
 import 'widgets/checkout_sheet.dart';
@@ -19,6 +20,7 @@ class BookingPage extends StatefulWidget {
   final int adults;
   final int youth;
   final int children;
+  final BookingContext? bookingContext;
 
   const BookingPage({
     super.key,
@@ -30,6 +32,7 @@ class BookingPage extends StatefulWidget {
     this.adults = 1,
     this.youth = 0,
     this.children = 0,
+    this.bookingContext,
   });
 
   @override
@@ -108,6 +111,8 @@ class _BookingPageState extends State<BookingPage> {
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context),
+          if (widget.bookingContext != null)
+            SliverToBoxAdapter(child: _buildTripContextBanner(context)),
           if (_isLoading)
             const SliverFillRemaining(
               child: Center(child: Column(
@@ -605,6 +610,34 @@ class _BookingPageState extends State<BookingPage> {
     );
   }
 
+  Widget _buildTripContextBanner(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: context.colors.successGreen.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: context.colors.successGreen.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          Icon(PhosphorIcons.suitcase(PhosphorIconsStyle.fill),
+              size: 18, color: context.colors.successGreen),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              '来自你的行程计划',
+              style: context.textStyles.bodySmall.copyWith(
+                color: context.colors.successGreen,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showCheckoutBottomSheet(BuildContext context, TrainResult train) {
     final auth = context.read<AuthProvider>();
     if (!auth.isLoggedIn) {
@@ -623,6 +656,7 @@ class _BookingPageState extends State<BookingPage> {
           adults: widget.adults,
           youth: widget.youth,
           childrenCount: widget.children,
+          bookingContext: widget.bookingContext,
         );
       },
     );

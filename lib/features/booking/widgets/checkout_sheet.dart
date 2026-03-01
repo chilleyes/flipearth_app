@@ -6,6 +6,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/models/train.dart';
 import '../../../core/models/traveler.dart';
 import '../../../core/models/order.dart';
+import '../../../core/models/booking_context.dart';
 import '../../../core/providers/service_provider.dart';
 import '../payment_success_page.dart';
 import '../../profile/add_traveler_page.dart';
@@ -16,6 +17,7 @@ class CheckoutSheet extends StatefulWidget {
   final int adults;
   final int youth;
   final int childrenCount;
+  final BookingContext? bookingContext;
 
   const CheckoutSheet({
     super.key,
@@ -24,6 +26,7 @@ class CheckoutSheet extends StatefulWidget {
     this.adults = 1,
     this.youth = 0,
     this.childrenCount = 0,
+    this.bookingContext,
   });
 
   @override
@@ -144,6 +147,7 @@ class _CheckoutSheetState extends State<CheckoutSheet> {
               bookingReference: booking.bookingReference,
               amount: intent.amount,
               currency: intent.currency,
+              bookingContext: widget.bookingContext,
             ),
           ),
         );
